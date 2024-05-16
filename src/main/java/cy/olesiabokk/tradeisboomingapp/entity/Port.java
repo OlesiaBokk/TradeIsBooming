@@ -1,23 +1,21 @@
 package cy.olesiabokk.tradeisboomingapp.entity;
 
+import java.util.ArrayList;
+
 public class Port {
-    private Dock dock;
+    private final ArrayList<Dock> dockList;
     private final Supervisor supervisor;
 
-    public Dock getDock() {
-        return dock;
-    }
-
-    public void setDock(Dock dock) {
-        this.dock = dock;
+    public ArrayList<Dock> getDockList() {
+        return dockList;
     }
 
     public Supervisor getSupervisor() {
         return supervisor;
     }
 
-    public Port(Supervisor supervisor, Dock dock){
+    public Port(Supervisor supervisor, ArrayList<Dock> dockList){
         this.supervisor = supervisor;
-        this.dock = dock;
+        this.dockList = dockList;
     }
 }
