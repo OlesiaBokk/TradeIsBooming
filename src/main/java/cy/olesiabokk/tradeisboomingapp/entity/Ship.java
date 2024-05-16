@@ -14,6 +14,11 @@ public class Ship {
     private boolean visitedPort = false;
     private static final AtomicLong counter = new AtomicLong(0);
 
+    public Ship(int maxAmount) {
+        this.id = counter.addAndGet(1);
+        this.maxAmount = maxAmount;
+    }
+
     public Long getId() {
         return id;
     }
@@ -64,10 +69,5 @@ public class Ship {
 
     public void setVisitedPort(boolean visitedPort) {
         this.visitedPort = visitedPort;
-    }
-
-    public Ship(int maxAmount) {
-        this.id = counter.addAndGet(1);
-        this.maxAmount = maxAmount;
     }
 }
