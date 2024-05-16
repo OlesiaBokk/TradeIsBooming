@@ -7,7 +7,7 @@ public class Dock {
     private final Stock stock;
     private static final AtomicLong counter = new AtomicLong(0);
 
-    public Dock(Long id, Stock stock){
+    public Dock(Stock stock){
         this.id = counter.addAndGet(1);
         this.stock = stock;
     }

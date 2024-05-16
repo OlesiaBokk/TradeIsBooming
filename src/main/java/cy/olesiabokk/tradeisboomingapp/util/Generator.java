@@ -9,4 +9,10 @@ public class Generator {
     public Generator(Randomizer randomizer){
         this.randomizer = randomizer;
     }
+
+    public int addMaxCapacity(int from, int to){
+        return randomizer.getRandomNum(from, to);
+    }
+
+
 }
