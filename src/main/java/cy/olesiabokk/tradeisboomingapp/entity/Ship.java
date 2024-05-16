@@ -66,7 +66,7 @@ public class Ship {
         this.visitedPort = visitedPort;
     }
 
-    public Ship(Long id, int maxAmount) {
+    public Ship(int maxAmount) {
         this.id = counter.addAndGet(1);
         this.maxAmount = maxAmount;
     }
