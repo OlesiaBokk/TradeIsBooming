@@ -1,15 +1,15 @@
 package cy.olesiabokk.tradeisboomingapp.entity;
 
 public class Stock {
-    private final int maxAmount;
-    private int currentAmount;
+    private final int maxCapacity; // вместимость
+    private int currentAmount; // сколько занято товарами
 
-    public Stock(int maxAmount){
-        this.maxAmount = maxAmount;
+    public Stock(int maxCapacity){
+        this.maxCapacity = maxCapacity;
     }
 
-    public int getMaxAmount() {
-        return maxAmount;
+    public int getMaxCapacity() {
+        return maxCapacity;
     }
 
     public int getCurrentAmount() {
@@ -17,6 +17,10 @@ public class Stock {
     }
 
     public void setCurrentAmount(int currentAmount) {
-        this.currentAmount = currentAmount;
+        this.currentAmount += currentAmount;
+    }
+
+    public int getAvailablePlace(){
+        return (maxCapacity - currentAmount);
     }
 }

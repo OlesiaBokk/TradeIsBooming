@@ -3,16 +3,16 @@ package cy.olesiabokk.tradeisboomingapp.entity;
 import java.util.ArrayList;
 
 public class Port {
-    private final ArrayList<Dock> dockList;
+    private final ArrayList<Berth> berthList;
     private final Supervisor supervisor;
 
-    public Port(Supervisor supervisor, ArrayList<Dock> dockList){
+    public Port(Supervisor supervisor, ArrayList<Berth> berthList){
         this.supervisor = supervisor;
-        this.dockList = dockList;
+        this.berthList = berthList;
     }
 
-    public ArrayList<Dock> getDockList() {
-        return dockList;
+    public ArrayList<Berth> getBerthList() {
+        return berthList;
     }
 
     public Supervisor getSupervisor() {
