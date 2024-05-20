@@ -1,34 +1,32 @@
 package cy.olesiabokk.tradeisboomingapp.entity;
 
-
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Ship {
-    private Long id;
-    private int maxAmount;
-    private int currentAmount;
-    private static int timeLoading = 100;
-    private static int timeUnloading = 100;
-    private int timeEnterDock;
-    private int timeLeaveDock;
+    private final Long id;
+    private final int maxCapacity; // вместимость
+    private int currentAmount; // сколько занято товарами
+    private static final int timeLoading = 100;
+    private static final int timeUnloading = 100;
+    private static final int timeEnterBerth = 10;
+    private static final int timeLeaveBerth = 10;
     private boolean visitedPort = false;
     private static final AtomicLong counter = new AtomicLong(0);
+    private final JobType jobType;
 
-    public Ship(int maxAmount) {
+    public Ship(int maxCapacity, JobType jobType) {
         this.id = counter.addAndGet(1);
-        this.maxAmount = maxAmount;
+        this.maxCapacity = maxCapacity;
+        this.jobType = jobType;
     }
 
     public Long getId() {
         return id;
     }
 
-    public int getMaxAmount() {
-        return maxAmount;
-    }
-
-    public void setMaxAmount(int maxAmount) {
-        this.maxAmount = maxAmount;
+    public int getMaxCapacity() {
+        return maxCapacity;
     }
 
     public int getCurrentAmount() {
@@ -39,28 +37,24 @@ public class Ship {
         this.currentAmount = currentAmount;
     }
 
-    public int getTimeEnterDock() {
-        return timeEnterDock;
+    public int getAvailablePlace() {
+        return (maxCapacity - currentAmount);
     }
 
-    public int getTimeLoading(){
+    public int getTimeEnterBerth() {
+        return timeEnterBerth;
+    }
+
+    public int getTimeLoading() {
         return timeLoading;
     }
 
-    public int getTimeUnloading(){
+    public int getTimeUnloading() {
         return timeUnloading;
     }
 
-    public void setTimeEnterDock(int currentAmount) {
-        this.timeEnterDock = currentAmount * 10;
-    }
-
-    public int getTimeLeaveDock() {
-        return timeLeaveDock;
-    }
-
-    public void setTimeLeaveDock(int currentAmount) {
-        this.timeLeaveDock = currentAmount * 10;
+    public int getTimeLeaveBerth() {
+        return timeLeaveBerth;
     }
 
     public boolean isVisitedPort() {
@@ -69,5 +63,93 @@ public class Ship {
 
     public void setVisitedPort(boolean visitedPort) {
         this.visitedPort = visitedPort;
+    }
+
+    public void setJobType(Port port, Long berthID) {
+        switch (jobType) {
+            case UNSHIP:
+                unship(port);
+                break;
+            case LOAD:
+                load(port, berthID);
+                break;
+            case UNSHIP_LOAD:
+                unshipThenLoad(port);
+                break;
+        }
+    }
+
+    public JobType getJobType() {
+        return this.jobType;
+    }
+
+    public void unship(Port port) {
+        Berth berth;
+        for (int i = 0; i < port.getBerthList().size(); i++) {
+            int freeStockPlace = port.getBerthList().get(i).getStock().getAvailablePlace();
+            if (freeStockPlace > 3000) {
+                berth = port.getBerthList().get(i);
+                int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
+                // 1. get new curr Amount of goods in Stock
+                berth.setCurrStockAmount(getCurrentAmount());
+                int timeToUnload = getCurrentAmount() * getTimeUnloading();
+                //2. set new curr Amount of goods at Ship
+                setCurrentAmount(0);
+                int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+                setVisitedPort(true);
+                break;
+            }
+        }
+        if (!visitedPort) {
+            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+        }
+    }
+
+    public void load(Port port, Long berthID) {
+        Optional<Berth> optional = port.getBerthList().stream()
+                .filter(b -> b.getId().equals(berthID))
+                .findAny();
+        if (optional.isPresent()) {
+            Berth berth = optional.get();
+            int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
+            // 1. get new curr Amount of goods in Stock
+            int freeShipPlace = getAvailablePlace();
+            berth.setCurrStockAmount(berth.getCurrentStockAmount() - freeShipPlace);
+            int timeLoading = freeShipPlace * getTimeLoading();
+            //2. set new curr Amount of goods at Ship
+            setCurrentAmount(freeShipPlace);
+            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+            setVisitedPort(true);
+        } else {
+            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+        }
+    }
+
+    public void unshipThenLoad(Port port) {
+        Berth berth;
+        for (int i = 0; i < port.getBerthList().size(); i++) {
+            int freeStockPlace = port.getBerthList().get(i).getStock().getAvailablePlace();
+            if (freeStockPlace > 3000) {
+                berth = port.getBerthList().get(i);
+                int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
+                // 1. get new curr Amount of goods in Stock
+                berth.setCurrStockAmount(getCurrentAmount());
+                int timeToUnload = getCurrentAmount() * getTimeUnloading();
+                //2. set new curr Amount of goods at Ship
+                setCurrentAmount(0);
+                // 3. get new curr Amount of goods in Stock
+                int freeShipPlace = getAvailablePlace();
+                berth.setCurrStockAmount(berth.getCurrentStockAmount() - freeShipPlace);
+                int timeLoading = freeShipPlace * getTimeLoading();
+                //4. set new curr Amount of goods at Ship
+                setCurrentAmount(freeShipPlace);
+                int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+                setVisitedPort(true);
+                break;
+            }
+        }
+        if (!visitedPort) {
+            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+        }
     }
 }
