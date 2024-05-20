@@ -1,12 +1,12 @@
 package cy.olesiabokk.tradeisboomingapp.entity;
 
 public class Supervisor {
-    private Dock dock;
+    private Berth berth;
     private Ship ship;
     private Stock stock;
 
-    public Dock getDock() {
-        return dock;
+    public Long getDock() {
+        return berth.getId();
     }
 
     public Ship getShip() {
@@ -15,5 +15,17 @@ public class Supervisor {
 
     public Stock getStock() {
         return stock;
+    }
+
+    public int getCurrentStockAmount(){
+        return berth.getCurrentStockAmount();
+    }
+
+    public int getAvailStockPlace(){
+        return berth.getAvailPlace();
+    }
+
+    public int getAvailShipCapacity(){
+        return ship.getAvailablePlace();
     }
 }
