@@ -27,6 +27,4 @@ public class Generator {
         JobType[] jobTypes = JobType.values();
         return  jobTypes[random.nextInt(jobTypes.length)];
     }
-
-
 }
