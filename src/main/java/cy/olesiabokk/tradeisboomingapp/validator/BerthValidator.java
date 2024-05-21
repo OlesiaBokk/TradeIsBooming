@@ -3,7 +3,8 @@ package cy.olesiabokk.tradeisboomingapp.validator;
 import cy.olesiabokk.tradeisboomingapp.entity.Berth;
 
 public class BerthValidator {
-    Berth berth;
+    private Berth berth;
+
     private boolean availability;
 
     public boolean isAvailable(){
