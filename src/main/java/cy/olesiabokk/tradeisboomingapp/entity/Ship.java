@@ -1,10 +1,9 @@
 package cy.olesiabokk.tradeisboomingapp.entity;
 
-import java.util.Optional;
-import java.util.concurrent.Semaphore;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class Ship implements Runnable{
+public class Ship implements Runnable {
     private final Long id;
     private final int maxCapacity; // вместимость
     private int currentAmount; // сколько занято товарами
@@ -15,13 +14,13 @@ public class Ship implements Runnable{
     private boolean visitedPort = false;
     private static final AtomicLong counter = new AtomicLong(0);
     private final JobType jobType;
-    public Semaphore semaphore;
+    private final Supervisor supervisor;
 
-    public Ship(int maxCapacity, JobType jobType, Semaphore semaphore) {
+    public Ship(int maxCapacity, JobType jobType, Supervisor supervisor) {
         this.id = counter.addAndGet(1);
         this.maxCapacity = maxCapacity;
         this.jobType = jobType;
-        this.semaphore = semaphore;
+        this.supervisor = supervisor;
     }
 
     public Long getShipId() {
