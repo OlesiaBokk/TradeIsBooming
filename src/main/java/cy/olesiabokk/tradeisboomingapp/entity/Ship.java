@@ -129,9 +129,85 @@ public class Ship implements Runnable {
         }
     }
 
-    public void unshipThenLoad() throws InterruptedException {
-        System.out.println("Ship " + getShipId() + " starts " + getJobType());
-        System.out.println("Ship " + getShipId() + " visitedPort");
+    public void load(Berth berth) {
+        int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
+        try {
+            Thread.sleep(timeEnterBerth);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // запросить кол-во товаров для разгрузки причала
+        // запросить свободное место на корабле
+        // если свободного места на корабле < 250 -> уплыть из порта
+        if (berth.getCurrentStockAmount() > getAvailablePlace() && getAvailablePlace() <= 250) {
+            int leaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+            try {
+                Thread.sleep(leaveBerth);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            // 1. get new curr Amount of goods in Stock
+            int freeShipPlace = getAvailablePlace();
+            berth.setCurrStockAmount(berth.getCurrentStockAmount() - freeShipPlace);
+            int timeLoading = freeShipPlace * getTimeLoading();
+            try {
+                Thread.sleep(timeLoading);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            //2. set new curr Amount of goods at Ship
+            setCurrentAmount(freeShipPlace);
+            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+            try {
+                Thread.sleep(timeLeaveBerth);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            setVisitedPort(true);
+        }
+    }
+
+    public void unshipThenLoad(Berth berth) {
+        int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
+        try {
+            Thread.sleep(timeEnterBerth);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // запросить свободное место причала
+        // запросить кол-во товаров на корабле
+        // если свободного места причала <= 500 -> уплыть из порта
+        if (berth.getAvailPlace() < getCurrentAmount() && berth.getAvailPlace() <= 500) {
+            int leaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+            try {
+                Thread.sleep(leaveBerth);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+        } else {
+            // 1. get new curr Amount of goods in Stock
+            berth.setCurrStockAmount(getCurrentAmount());
+            int timeToUnload = getCurrentAmount() * getTimeUnloading();
+            try {
+                Thread.sleep(timeToUnload);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            //2. set new curr Amount of goods at Ship
+            setCurrentAmount(0);
+            // 3. get new curr Amount of goods in Stock
+            int freeShipPlace = getAvailablePlace();
+            berth.setCurrStockAmount(berth.getCurrentStockAmount() - freeShipPlace);
+            int timeLoading = freeShipPlace * getTimeLoading();
+            //4. set new curr Amount of goods at Ship
+            setCurrentAmount(freeShipPlace);
+            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+            setVisitedPort(true);
+        }
     }
 
     @Override
