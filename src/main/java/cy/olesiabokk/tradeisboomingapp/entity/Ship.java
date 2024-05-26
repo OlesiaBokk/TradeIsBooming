@@ -89,10 +89,24 @@ public class Ship implements Runnable {
         return this.jobType;
     }
 
-    public void unship() throws InterruptedException {
-        System.out.println("Ship " + getShipId() + " starts " + getJobType());
-        System.out.println("Ship " + getShipId() + " visitedPort");
-    }
+    public void unship(Berth berth) {
+        int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
+        try {
+            Thread.sleep(timeEnterBerth);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // запросить свободное место причала
+        // запросить кол-во товаров на корабле
+        // если свободного места причала <= 500 -> уплыть из порта
+        if (berth.getAvailPlace() < getCurrentAmount() && berth.getAvailPlace() <= 500) {
+            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+            try {
+                Thread.sleep(timeLeaveBerth);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
 
     public void load() throws InterruptedException {
         System.out.println("Ship " + getShipId() + " starts " + getJobType());
