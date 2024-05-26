@@ -108,9 +108,25 @@ public class Ship implements Runnable {
                 throw new RuntimeException(e);
             }
 
-    public void load() throws InterruptedException {
-        System.out.println("Ship " + getShipId() + " starts " + getJobType());
-        System.out.println("Ship " + getShipId() + " visitedPort");
+        } else {
+            // 1. get new curr Amount of goods in Stock
+            berth.setCurrStockAmount(getCurrentAmount());
+            int timeToUnload = getCurrentAmount() * getTimeUnloading();
+            try {
+                Thread.sleep(timeToUnload);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            //2. set new curr Amount of goods at Ship
+            setCurrentAmount(0);
+            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+            try {
+                Thread.sleep(timeLeaveBerth);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            setVisitedPort(true);
+        }
     }
 
     public void unshipThenLoad() throws InterruptedException {
