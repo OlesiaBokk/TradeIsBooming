@@ -1,10 +1,9 @@
 package cy.olesiabokk.tradeisboomingapp.entity;
 
-import java.util.Optional;
-import java.util.concurrent.Semaphore;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class Ship implements Runnable{
+public class Ship implements Runnable {
     private final Long id;
     private final int maxCapacity; // вместимость
     private int currentAmount; // сколько занято товарами
@@ -15,13 +14,13 @@ public class Ship implements Runnable{
     private boolean visitedPort = false;
     private static final AtomicLong counter = new AtomicLong(0);
     private final JobType jobType;
-    public Semaphore semaphore;
+    private final Supervisor supervisor;
 
-    public Ship(int maxCapacity, JobType jobType, Semaphore semaphore) {
+    public Ship(int maxCapacity, JobType jobType, Supervisor supervisor) {
         this.id = counter.addAndGet(1);
         this.maxCapacity = maxCapacity;
         this.jobType = jobType;
-        this.semaphore = semaphore;
+        this.supervisor = supervisor;
     }
 
     public Long getShipId() {
@@ -60,7 +59,7 @@ public class Ship implements Runnable{
         return timeLeaveBerth;
     }
 
-    public boolean isVisitedPort() {
+    public boolean getVisitedPort() {
         return visitedPort;
     }
 
@@ -68,20 +67,16 @@ public class Ship implements Runnable{
         this.visitedPort = visitedPort;
     }
 
-    //public void setJobType(Port port, Long berthID) {
-    public void setJobType() throws InterruptedException {
+    public void doJobType(Berth berth) throws InterruptedException {
         switch (jobType) {
             case UNSHIP:
-                unship();
-                //unship(port);
+                unship(berth);
                 break;
             case LOAD:
-                //load(port, berthID);
-                load();
+                load(berth);
                 break;
             case UNSHIP_LOAD:
-                //unshipThenLoad(port);
-                unshipThenLoad();
+                unshipThenLoad(berth);
                 break;
         }
     }
@@ -90,31 +85,175 @@ public class Ship implements Runnable{
         return this.jobType;
     }
 
-    public void unship() throws InterruptedException {
-        System.out.println("Ship " + getShipId() + " starts " + getJobType());
-        System.out.println("Ship " + getShipId() + " visitedPort");
+    public void unship(Berth berth) {
+        System.out.println("Ship " + getShipId() + " enters Port");
+        int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
+        try {
+            //Thread.sleep(timeEnterBerth);
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // запросить свободное место причала
+        // запросить кол-во товаров на корабле
+        // если свободного места причала <= 500 -> уплыть из порта
+        if (berth.getAvailPlace() < getCurrentAmount() && berth.getAvailPlace() <= 500) {
+            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+            try {
+                //Thread.sleep(timeLeaveBerth);
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+        } else {
+            // 1. get new curr Amount of goods in Stock
+            berth.setCurrStockAmount(getCurrentAmount());
+            int timeToUnload = getCurrentAmount() * getTimeUnloading();
+            try {
+                //Thread.sleep(timeToUnload);
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            //2. set new curr Amount of goods at Ship
+            setCurrentAmount(0);
+            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+            try {
+                //Thread.sleep(timeLeaveBerth);
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("Ship " + getShipId() + "done job " + getJobType() + " has visited port");
+            setVisitedPort(true);
+        }
     }
 
-    public void load() throws InterruptedException {
-        System.out.println("Ship " + getShipId() + " starts " + getJobType());
-        System.out.println("Ship " + getShipId() + " visitedPort");
+    public void load(Berth berth) {
+        System.out.println("Ship " + getShipId() + " enters Port");
+        int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
+        try {
+            //Thread.sleep(timeEnterBerth);
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // запросить кол-во товаров для разгрузки причала
+        // запросить свободное место на корабле
+        // если свободного места на корабле < 250 -> уплыть из порта
+        if (berth.getCurrentStockAmount() > getAvailablePlace() && getAvailablePlace() <= 250) {
+            int leaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+            try {
+                //Thread.sleep(leaveBerth);
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            // 1. get new curr Amount of goods in Stock
+            int freeShipPlace = getAvailablePlace();
+            berth.setCurrStockAmount(berth.getCurrentStockAmount() - freeShipPlace);
+            int timeLoading = freeShipPlace * getTimeLoading();
+            try {
+                //Thread.sleep(timeLoading);
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            //2. set new curr Amount of goods at Ship
+            setCurrentAmount(freeShipPlace);
+            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+            try {
+                //Thread.sleep(timeLeaveBerth);
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("Ship " + getShipId() + "done job " + getJobType() + " has visited port");
+            setVisitedPort(true);
+        }
     }
 
-    public void unshipThenLoad() throws InterruptedException {
-        System.out.println("Ship " + getShipId() + " starts " + getJobType());
-        System.out.println("Ship " + getShipId() + " visitedPort");
+    public void unshipThenLoad(Berth berth) {
+        System.out.println("Ship " + getShipId() + " enters Port");
+        int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
+        try {
+            //Thread.sleep(timeEnterBerth);
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // запросить свободное место причала
+        // запросить кол-во товаров на корабле
+        // если свободного места причала <= 500 -> уплыть из порта
+        if (berth.getAvailPlace() < getCurrentAmount() && berth.getAvailPlace() <= 500) {
+            int leaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+            try {
+               // Thread.sleep(leaveBerth);
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+        } else {
+            // 1. get new curr Amount of goods in Stock
+            berth.setCurrStockAmount(getCurrentAmount());
+            int timeToUnload = getCurrentAmount() * getTimeUnloading();
+            try {
+               // Thread.sleep(timeToUnload);
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            //2. set new curr Amount of goods at Ship
+            setCurrentAmount(0);
+            // 3. get new curr Amount of goods in Stock
+            int freeShipPlace = getAvailablePlace();
+            berth.setCurrStockAmount(berth.getCurrentStockAmount() - freeShipPlace);
+            int timeLoading = freeShipPlace * getTimeLoading();
+            //4. set new curr Amount of goods at Ship
+            setCurrentAmount(freeShipPlace);
+            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+            System.out.println("Ship " + getShipId() + "done job " + getJobType() + " has visited port");
+            setVisitedPort(true);
+        }
     }
 
     @Override
     public void run() {
         try {
-            semaphore.acquire();
-            setJobType();
-            Thread.sleep(500);
-            System.out.println("Ship " + getShipId() + " end work");
-            semaphore.release();
-            Thread.sleep(500);
+            List<Berth> berths = supervisor.getBerthList();
+            for (int i = 0; i < berths.size(); i++) {
+                if (berths.get(i).needUnloadStock() && getJobType().equals(JobType.LOAD)) {
+                    berths.get(i).lock.lock();
+                    doJobType(berths.get(i));
+                    berths.get(i).lock.unlock();
+                    if (getVisitedPort()) {
+                        return;
+                    }
 
+                } else if (berths.get(i).needLoadStock() && getJobType().equals(JobType.UNSHIP) ||
+                        berths.get(i).needLoadStock() && getJobType().equals(JobType.UNSHIP_LOAD)) {
+                    berths.get(i).lock.lock();
+                    doJobType(berths.get(i));
+                    berths.get(i).lock.unlock();
+                    if (getVisitedPort()) {
+                        return;
+                    }
+
+                } else {
+                    berths.get(i).lock.lock();
+                    doJobType(berths.get(i));
+                    berths.get(i).lock.unlock();
+                    if (getVisitedPort()) {
+                        return;
+                    }
+                }
+            }
         } catch (InterruptedException e) {
             System.err.println(e.getMessage());
         }

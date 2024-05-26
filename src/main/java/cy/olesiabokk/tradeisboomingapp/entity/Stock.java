@@ -23,4 +23,14 @@ public class Stock {
     public int getAvailablePlace(){
         return (maxCapacity - currentAmount);
     }
+
+    // нужно забрать товары из хранилища
+    public boolean needUnload(){
+        return getAvailablePlace() <= 2000;
+    }
+
+    // нужно привезти товары
+    public boolean needLoad(){
+        return getCurrentAmount() <= 1000;
+    }
 }

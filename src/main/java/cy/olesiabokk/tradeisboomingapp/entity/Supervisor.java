@@ -1,12 +1,19 @@
 package cy.olesiabokk.tradeisboomingapp.entity;
 
+import java.util.List;
+
 public class Supervisor {
+    private List<Berth> berthList;
     private Berth berth;
     private Ship ship;
     private Stock stock;
 
-    public Long getDock() {
-        return berth.getId();
+    public List<Berth> getBerthList() {
+        return berthList;
+    }
+
+    public void setBerthList(List<Berth> list){
+        this.berthList = list;
     }
 
     public Ship getShip() {
