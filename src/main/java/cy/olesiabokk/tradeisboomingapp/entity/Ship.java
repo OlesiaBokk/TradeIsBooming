@@ -213,13 +213,34 @@ public class Ship implements Runnable {
     @Override
     public void run() {
         try {
-            semaphore.acquire();
-            setJobType();
-            Thread.sleep(500);
-            System.out.println("Ship " + getShipId() + " end work");
-            semaphore.release();
-            Thread.sleep(500);
+            List<Berth> berths = supervisor.getBerthList();
+            for (int i = 0; i < berths.size(); i++) {
+                if (berths.get(i).needUnloadStock() && getJobType().equals(JobType.LOAD)) {
+                    berths.get(i).lock.lock();
+                    doJobType(berths.get(i));
+                    berths.get(i).lock.unlock();
+                    if (getVisitedPort()) {
+                        return;
+                    }
 
+                } else if (berths.get(i).needLoadStock() && getJobType().equals(JobType.UNSHIP) ||
+                        berths.get(i).needLoadStock() && getJobType().equals(JobType.UNSHIP_LOAD)) {
+                    berths.get(i).lock.lock();
+                    doJobType(berths.get(i));
+                    berths.get(i).lock.unlock();
+                    if (getVisitedPort()) {
+                        return;
+                    }
+
+                } else {
+                    berths.get(i).lock.lock();
+                    doJobType(berths.get(i));
+                    berths.get(i).lock.unlock();
+                    if (getVisitedPort()) {
+                        return;
+                    }
+                }
+            }
         } catch (InterruptedException e) {
             System.err.println(e.getMessage());
         }
