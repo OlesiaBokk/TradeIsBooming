@@ -59,7 +59,7 @@ public class Ship implements Runnable {
         return timeLeaveBerth;
     }
 
-    public boolean isVisitedPort() {
+    public boolean getVisitedPort() {
         return visitedPort;
     }
 
@@ -67,20 +67,16 @@ public class Ship implements Runnable {
         this.visitedPort = visitedPort;
     }
 
-    //public void setJobType(Port port, Long berthID) {
-    public void setJobType() throws InterruptedException {
+    public void doJobType(Berth berth) throws InterruptedException {
         switch (jobType) {
             case UNSHIP:
-                unship();
-                //unship(port);
+                unship(berth);
                 break;
             case LOAD:
-                //load(port, berthID);
-                load();
+                load(berth);
                 break;
             case UNSHIP_LOAD:
-                //unshipThenLoad(port);
-                unshipThenLoad();
+                unshipThenLoad(berth);
                 break;
         }
     }
