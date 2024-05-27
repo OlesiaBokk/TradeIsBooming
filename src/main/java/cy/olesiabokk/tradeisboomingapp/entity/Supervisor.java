@@ -32,12 +32,24 @@ public class Supervisor {
         return ship.getShipId();
     }
 
+    public int getAvailStockPlace(){
+        return berth.getAvailPlace();
+    }
+
     public int getCurrentStockAmount(){
         return berth.getCurrentStockAmount();
     }
 
-    public int getAvailStockPlace(){
-        return berth.getAvailPlace();
+    public boolean needLoading(){
+        return berth.needLoadStock();
+    }
+
+    public boolean needUnloading(){
+        return berth.needUnloadStock();
+    }
+
+    public boolean berthIsLocked(){
+        return berth.lock.isLocked();
     }
 
     public int getAvailShipCapacity(){
