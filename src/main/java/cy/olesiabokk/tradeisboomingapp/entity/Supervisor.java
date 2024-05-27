@@ -80,6 +80,16 @@ public class Supervisor {
         }
     }
 
+    public void currentStockAmount(Long berthId, int currentAmount){
+        String message = String.format("Berth %d: Stock current amount of goods is %d.", berthId, currentAmount);
+        printMessage(message);
+    }
+
+    public void availableStockPlace(Long berthId, int availablePlace){
+        String message = String.format("Berth %d: Stock available place is %d.", berthId, availablePlace);
+        printMessage(message);
+    }
+
     private void printMessage(String message) {
         System.out.println(message);
     }
