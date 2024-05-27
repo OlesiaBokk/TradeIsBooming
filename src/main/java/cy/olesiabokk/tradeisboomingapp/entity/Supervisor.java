@@ -12,27 +12,86 @@ public class Supervisor {
         return berthList;
     }
 
-    public void setBerthList(List<Berth> list){
+    public void setBerthList(List<Berth> list) {
         this.berthList = list;
+    }
+
+    public Berth getBerth() {
+        return berth;
+    }
+
+    public Long getBertId() {
+        return berth.getId();
     }
 
     public Ship getShip() {
         return ship;
     }
 
-    public Stock getStock() {
-        return stock;
+    public Long getShipId() {
+        return ship.getShipId();
     }
 
-    public int getCurrentStockAmount(){
-        return berth.getCurrentStockAmount();
-    }
-
-    public int getAvailStockPlace(){
+    public int getAvailStockPlace() {
         return berth.getAvailPlace();
     }
 
-    public int getAvailShipCapacity(){
+    public int getCurrentStockAmount() {
+        return berth.getCurrentStockAmount();
+    }
+
+    public boolean berthNeedLoading() {
+        return berth.needLoadStock();
+    }
+
+    public boolean berthNeedUnloading() {
+        return berth.needUnloadStock();
+    }
+
+    public boolean berthIsLocked() {
+        return berth.lock.isLocked();
+    }
+
+    public int getAvailShipCapacity() {
         return ship.getAvailablePlace();
     }
+
+    public void berthLocked(Long berthId, Long shipId) {
+        String message = String.format("Berth %d is locked by %d.", berthId, shipId);
+        printMessage(message);
+    }
+
+    public void berthUnlocked(Long berthId, Long shipId) {
+        String message = String.format("Berth %d is unlocked by %d.", berthId, shipId);
+        printMessage(message);
+    }
+
+    public void requireBerthUnload(Long berthId) {
+        if (berthNeedUnloading()) {
+            String message = String.format("Berth %d: Stock unloading required.", berthId);
+            printMessage(message);
+        }
+    }
+
+    public void requireBerthLoad(Long berthId) {
+        if (berthNeedLoading()) {
+            String message = String.format("Berth %d: Stock loading required.", berthId);
+            printMessage(message);
+        }
+    }
+
+    public void currentStockAmount(Long berthId, int currentAmount){
+        String message = String.format("Berth %d: Stock current amount of goods is %d.", berthId, currentAmount);
+        printMessage(message);
+    }
+
+    public void availableStockPlace(Long berthId, int availablePlace){
+        String message = String.format("Berth %d: Stock available place is %d.", berthId, availablePlace);
+        printMessage(message);
+    }
+
+    private void printMessage(String message) {
+        System.out.println(message);
+    }
+
 }
