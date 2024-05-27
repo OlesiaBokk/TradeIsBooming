@@ -16,12 +16,20 @@ public class Supervisor {
         this.berthList = list;
     }
 
+    public Berth getBerth(){
+        return berth;
+    }
+
+    public Long getBertId(){
+        return berth.getId();
+    }
+
     public Ship getShip() {
         return ship;
     }
 
-    public Stock getStock() {
-        return stock;
+    public Long getShipId(){
+        return ship.getShipId();
     }
 
     public int getCurrentStockAmount(){
