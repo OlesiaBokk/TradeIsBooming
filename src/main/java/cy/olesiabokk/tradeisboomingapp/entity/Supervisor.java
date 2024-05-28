@@ -52,8 +52,20 @@ public class Supervisor {
         return berth.lock.isLocked();
     }
 
-    public int getAvailShipCapacity() {
+    public int getAvailShipPlace() {
         return ship.getAvailablePlace();
+    }
+
+    public int getCurrentShipAmount() {
+        return ship.getCurrentAmount();
+    }
+
+    public JobType getShipJobType() {
+        return ship.getJobType();
+    }
+
+    public boolean getShipJobStatus() {
+        return ship.getVisitedPort();
     }
 
     public void berthLocked(Long berthId, Long shipId) {
