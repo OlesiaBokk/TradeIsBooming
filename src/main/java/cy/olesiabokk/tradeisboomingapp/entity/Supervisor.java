@@ -2,6 +2,9 @@ package cy.olesiabokk.tradeisboomingapp.entity;
 
 import java.util.List;
 
+import static cy.olesiabokk.tradeisboomingapp.entity.JobType.LOAD;
+import static cy.olesiabokk.tradeisboomingapp.entity.JobType.UNSHIP;
+
 public class Supervisor {
     private List<Berth> berthList;
     private Berth berth;
@@ -92,14 +95,60 @@ public class Supervisor {
         }
     }
 
-    public void currentStockAmount(Long berthId, int currentAmount){
+    public void currentStockAmount(Long berthId, int currentAmount) {
         String message = String.format("Berth %d: Stock current amount of goods is %d.", berthId, currentAmount);
         printMessage(message);
     }
 
-    public void availableStockPlace(Long berthId, int availablePlace){
+    public void availableStockPlace(Long berthId, int availablePlace) {
         String message = String.format("Berth %d: Stock available place is %d.", berthId, availablePlace);
         printMessage(message);
+    }
+
+    public void shipEntersPort(Long shipId, long time) {
+        String message = String.format("Ship %d enters port. Expected shipping time: %d minutes", shipId, (time / (1000 * 60)) % 60);
+        printMessage(message);
+    }
+
+    public void shipLeavesPort(Long shipId, long time) {
+        String message = String.format("Ship %d leaves port. Expected departure time: %d minutes", shipId, (time / (1000 * 60)) % 60);
+        printMessage(message);
+    }
+
+    public void currentShipAmount(Long shipID, int currAmount) {
+        String message = String.format("Ship %d current amount of Goods: %d", shipID, currAmount);
+        printMessage(message);
+    }
+
+    public void availableShipPlace(Long shipID, int availPlace) {
+        String message = String.format("Ship %d available place: %d", shipID, availPlace);
+        printMessage(message);
+    }
+
+    public void shipJobStatus(Long shipID) {
+        if (getShipJobStatus()) {
+            String message = String.format("Ship %d done its job", shipID);
+            printMessage(message);
+        } else {
+            String message = String.format("Ship %d cannot do its job", shipID);
+            printMessage(message);
+        }
+    }
+
+    public void shipDoesJob(Long shipId, Berth berthId, long time) {
+        if (getShipJobType() == UNSHIP) {
+            String message = String.format("Ship %d is unshipping in berth %d. Expected unshipping time: %d minutes",
+                    shipId, berthId, (time / (1000 * 60)) % 60);
+            printMessage(message);
+        } else if(getShipJobType() == LOAD){
+            String message = String.format("Ship %d is loading in berth %d. Expected loading time: %d minutes",
+                    shipId, berthId, (time / (1000 * 60)) % 60);
+            printMessage(message);
+        } else {
+            String message = String.format("Ship %d unships then loads in berth %d. Expected job time: %d minutes",
+                    shipId, berthId, (time / (1000 * 60)) % 60);
+            printMessage(message);
+        }
     }
 
     private void printMessage(String message) {
