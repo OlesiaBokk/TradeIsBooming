@@ -17,7 +17,7 @@ public class Stock {
     }
 
     public void setCurrentAmount(int newAmount) {
-        this.currentAmount += newAmount;
+        this.currentAmount = newAmount;
     }
 
     public int getAvailablePlace(){
