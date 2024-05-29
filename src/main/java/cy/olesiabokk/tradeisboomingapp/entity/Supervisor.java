@@ -105,8 +105,8 @@ public class Supervisor {
         printMessage(message);
     }
 
-    public void shipEntersPort(Long shipId, long time) {
-        String message = String.format("Ship %d enters port. Expected shipping time: %d minutes, %d seconds", shipId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
+    public void shipEntersPort(Long shipId, JobType jobType, long time) {
+        String message = String.format("Ship %d enters port. Job type is " + jobType + " . Expected shipping time: %d minutes, %d seconds", shipId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
         printMessage(message);
     }
 
