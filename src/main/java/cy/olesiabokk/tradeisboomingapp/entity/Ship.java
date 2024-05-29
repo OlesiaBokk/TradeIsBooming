@@ -113,7 +113,7 @@ public class Ship implements Runnable {
         } else {
             // 1. get new curr Amount of goods in Stock
             int timeToUnload = getCurrentAmount() * getTimeUnloading();
-            supervisor.shipDoesJob(getShipId(), berth.getId(), timeToUnload);
+            supervisor.shipDoesJob(getShipId(), getJobType(), berth.getId(), timeToUnload);
             try {
                 //Thread.sleep(timeToUnload);
                 Thread.sleep(10);
@@ -121,13 +121,13 @@ public class Ship implements Runnable {
                 throw new RuntimeException(e);
             }
             berth.setCurrStockAmount(getCurrentAmount());
-            supervisor.currentStockAmount(berth.getId(), supervisor.getCurrentStockAmount());
+            supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount());
             //2. set new curr Amount of goods at Ship
             setCurrentAmount(0);
             supervisor.currentShipAmount(getShipId(), getCurrentAmount());
             int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
             setVisitedPort(true);
-            supervisor.shipJobStatus(getShipId());
+            supervisor.shipJobStatus(getShipId(), getVisitedPort());
             supervisor.shipLeavesPort(getShipId(), timeLeaveBerth);
             try {
                 //Thread.sleep(timeLeaveBerth);
