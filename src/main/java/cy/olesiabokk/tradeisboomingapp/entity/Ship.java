@@ -267,26 +267,34 @@ public class Ship implements Runnable {
             List<Berth> berths = supervisor.getBerthList();
             for (int i = 0; i < berths.size(); i++) {
                 if (berths.get(i).needUnloadStock() && getJobType().equals(JobType.LOAD)) {
+                    supervisor.requireBerthUnload(berths.get(i).getId(), berths.get(i).needUnloadStock());
                     berths.get(i).lock.lock();
+                    supervisor.berthLocked(berths.get(i).getId(), getShipId());
                     doJobType(berths.get(i));
                     berths.get(i).lock.unlock();
+                    supervisor.berthUnlocked(berths.get(i).getId(), getShipId());
                     if (getVisitedPort()) {
                         return;
                     }
 
                 } else if (berths.get(i).needLoadStock() && getJobType().equals(JobType.UNSHIP) ||
                         berths.get(i).needLoadStock() && getJobType().equals(JobType.UNSHIP_LOAD)) {
+                    supervisor.requireBerthLoad(berths.get(i).getId(), berths.get(i).needLoadStock());
                     berths.get(i).lock.lock();
+                    supervisor.berthLocked(berths.get(i).getId(), getShipId());
                     doJobType(berths.get(i));
                     berths.get(i).lock.unlock();
+                    supervisor.berthUnlocked(berths.get(i).getId(), getShipId());
                     if (getVisitedPort()) {
                         return;
                     }
 
                 } else {
+                    supervisor.berthLocked(berths.get(i).getId(), getShipId());
                     berths.get(i).lock.lock();
                     doJobType(berths.get(i));
                     berths.get(i).lock.unlock();
+                    supervisor.berthUnlocked(berths.get(i).getId(), getShipId());
                     if (getVisitedPort()) {
                         return;
                     }
