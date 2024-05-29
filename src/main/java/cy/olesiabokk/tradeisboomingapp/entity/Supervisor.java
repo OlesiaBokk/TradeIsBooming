@@ -106,12 +106,12 @@ public class Supervisor {
     }
 
     public void shipEntersPort(Long shipId, long time) {
-        String message = String.format("Ship %d enters port. Expected shipping time: %d minutes", shipId, (time / (1000 * 60)) % 60);
+        String message = String.format("Ship %d enters port. Expected shipping time: %d minutes, %d seconds", shipId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
         printMessage(message);
     }
 
     public void shipLeavesPort(Long shipId, long time) {
-        String message = String.format("Ship %d leaves port. Expected departure time: %d minutes", shipId, (time / (1000 * 60)) % 60);
+        String message = String.format("Ship %d leaves port. Expected departure time: %d minutes, %d seconds", shipId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
         printMessage(message);
     }
 
@@ -137,16 +137,16 @@ public class Supervisor {
 
     public void shipDoesJob(Long shipId, JobType jobType, Long berthId, long time) {
         if (jobType.equals(UNSHIP)) {
-            String message = String.format("Ship %d is unshipping in berth %d. Expected unshipping time: %d minutes",
-                    shipId, berthId, (time / (1000 * 60)) % 60);
+            String message = String.format("Ship %d is unshipping in berth %d. Expected unshipping time: %d minutes, %d seconds",
+                    shipId, berthId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
             printMessage(message);
         } else if(jobType.equals(LOAD)){
-            String message = String.format("Ship %d is loading in berth %d. Expected loading time: %d minutes",
-                    shipId, berthId, (time / (1000 * 60)) % 60);
+            String message = String.format("Ship %d is loading in berth %d. Expected loading time: %d minutes, %d seconds",
+                    shipId, berthId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
             printMessage(message);
         } else {
-            String message = String.format("Ship %d unships then loads in berth %d. Expected job time: %d minutes",
-                    shipId, berthId, (time / (1000 * 60)) % 60);
+            String message = String.format("Ship %d unships then loads in berth %d. Expected job time: %d minutes, %d seconds",
+                    shipId, berthId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
             printMessage(message);
         }
     }
