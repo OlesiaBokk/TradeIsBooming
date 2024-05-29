@@ -16,8 +16,8 @@ public class Stock {
         return currentAmount;
     }
 
-    public void setCurrentAmount(int currentAmount) {
-        this.currentAmount += currentAmount;
+    public void setCurrentAmount(int newAmount) {
+        this.currentAmount += newAmount;
     }
 
     public int getAvailablePlace(){

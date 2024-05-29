@@ -72,24 +72,24 @@ public class Supervisor {
     }
 
     public void berthLocked(Long berthId, Long shipId) {
-        String message = String.format("Berth %d is locked by %d.", berthId, shipId);
+        String message = String.format("Berth %d is locked by Ship %d.", berthId, shipId);
         printMessage(message);
     }
 
     public void berthUnlocked(Long berthId, Long shipId) {
-        String message = String.format("Berth %d is unlocked by %d.", berthId, shipId);
+        String message = String.format("Ship %d unlocked Berth %d.",shipId, berthId);
         printMessage(message);
     }
 
-    public void requireBerthUnload(Long berthId) {
-        if (berthNeedUnloading()) {
+    public void requireBerthUnload(Long berthId, boolean needUnload) {
+        if (needUnload) {
             String message = String.format("Berth %d: Stock unloading required.", berthId);
             printMessage(message);
         }
     }
 
-    public void requireBerthLoad(Long berthId) {
-        if (berthNeedLoading()) {
+    public void requireBerthLoad(Long berthId, boolean needLoad) {
+        if (needLoad) {
             String message = String.format("Berth %d: Stock loading required.", berthId);
             printMessage(message);
         }
@@ -125,8 +125,8 @@ public class Supervisor {
         printMessage(message);
     }
 
-    public void shipJobStatus(Long shipID) {
-        if (getShipJobStatus()) {
+    public void shipJobStatus(Long shipID, boolean visitedPort) {
+        if (visitedPort) {
             String message = String.format("Ship %d done its job", shipID);
             printMessage(message);
         } else {
@@ -135,12 +135,12 @@ public class Supervisor {
         }
     }
 
-    public void shipDoesJob(Long shipId, Berth berthId, long time) {
-        if (getShipJobType() == UNSHIP) {
+    public void shipDoesJob(Long shipId, JobType jobType, Long berthId, long time) {
+        if (jobType.equals(UNSHIP)) {
             String message = String.format("Ship %d is unshipping in berth %d. Expected unshipping time: %d minutes",
                     shipId, berthId, (time / (1000 * 60)) % 60);
             printMessage(message);
-        } else if(getShipJobType() == LOAD){
+        } else if(jobType.equals(LOAD)){
             String message = String.format("Ship %d is loading in berth %d. Expected loading time: %d minutes",
                     shipId, berthId, (time / (1000 * 60)) % 60);
             printMessage(message);
