@@ -72,24 +72,24 @@ public class Supervisor {
     }
 
     public void berthLocked(Long berthId, Long shipId) {
-        String message = String.format("Berth %d is locked by %d.", berthId, shipId);
+        String message = String.format("Berth %d is locked by Ship %d.", berthId, shipId);
         printMessage(message);
     }
 
     public void berthUnlocked(Long berthId, Long shipId) {
-        String message = String.format("Berth %d is unlocked by %d.", berthId, shipId);
+        String message = String.format("Ship %d unlocked Berth %d.",shipId, berthId);
         printMessage(message);
     }
 
-    public void requireBerthUnload(Long berthId) {
-        if (berthNeedUnloading()) {
+    public void requireBerthUnload(Long berthId, boolean needUnload) {
+        if (needUnload) {
             String message = String.format("Berth %d: Stock unloading required.", berthId);
             printMessage(message);
         }
     }
 
-    public void requireBerthLoad(Long berthId) {
-        if (berthNeedLoading()) {
+    public void requireBerthLoad(Long berthId, boolean needLoad) {
+        if (needLoad) {
             String message = String.format("Berth %d: Stock loading required.", berthId);
             printMessage(message);
         }
