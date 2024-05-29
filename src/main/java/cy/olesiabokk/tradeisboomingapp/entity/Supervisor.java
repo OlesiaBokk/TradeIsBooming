@@ -135,7 +135,7 @@ public class Supervisor {
         }
     }
 
-    public void shipDoesJob(Long shipId, Berth berthId, long time) {
+    public void shipDoesJob(Long shipId, Long berthId, long time) {
         if (getShipJobType() == UNSHIP) {
             String message = String.format("Ship %d is unshipping in berth %d. Expected unshipping time: %d minutes",
                     shipId, berthId, (time / (1000 * 60)) % 60);
