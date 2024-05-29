@@ -140,7 +140,7 @@ public class Ship implements Runnable {
 
     public void load(Berth berth) {
         int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
-        supervisor.shipEntersPort(getShipId(), timeEnterBerth);
+        supervisor.shipEntersPort(getShipId(), getJobType(), timeEnterBerth);
         try {
             //Thread.sleep(timeEnterBerth);
             Thread.sleep(10);
@@ -151,22 +151,15 @@ public class Ship implements Runnable {
         // запросить кол-во товаров для разгрузки причала
         supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount());
         // запросить свободное место на корабле
-        supervisor.currentShipAmount(getShipId(), getAvailablePlace());
-        // если свободного места на корабле < 250 -> уплыть из порта
-        if (berth.getCurrentStockAmount() > getAvailablePlace() && getAvailablePlace() <= 250) {
-            int leaveBerth = getTimeLeaveBerth() * getCurrentAmount();
-            supervisor.shipLeavesPort(getShipId(), leaveBerth);
-            try {
-                //Thread.sleep(leaveBerth);
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            // 1. get new curr Amount of goods in Stock
-            int freeShipPlace = getAvailablePlace();
-            supervisor.availableShipPlace(getShipId(), freeShipPlace);
-            int timeLoading = freeShipPlace * getTimeLoading();
+        supervisor.availableShipPlace(getShipId(), getAvailablePlace());
+        // проверяем кол-во товаров после разгрузки порта
+        if (berth.getCurrentStockAmount() - getAvailablePlace() < 0) {
+            //100 - 150
+            int goodsLeftOnShip = getAvailablePlace() - berth.getCurrentStockAmount(); //50
+            int goodsLoadFromStock = getAvailablePlace() - goodsLeftOnShip;
+            berth.setCurrStockAmount(berth.getCurrentStockAmount() - (getAvailablePlace() - goodsLeftOnShip)); // 100
+            setCurrentAmount(goodsLeftOnShip);
+            int timeLoading = goodsLoadFromStock * getTimeLoading();
             supervisor.shipDoesJob(getShipId(), getJobType(), berth.getId(), timeLoading);
             try {
                 //Thread.sleep(timeLoading);
@@ -174,10 +167,30 @@ public class Ship implements Runnable {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            berth.setCurrStockAmount(berth.getCurrentStockAmount() - freeShipPlace);
             supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount());
-            //2. set new curr Amount of goods at Ship
-            setCurrentAmount(freeShipPlace);
+            supervisor.currentShipAmount(getShipId(), getCurrentAmount());
+            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+            setVisitedPort(true);
+            supervisor.shipJobStatus(getShipId(), getVisitedPort());
+            supervisor.shipLeavesPort(getShipId(), timeLeaveBerth);
+            try {
+                //Thread.sleep(timeLeaveBerth);
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            berth.setCurrStockAmount(berth.getCurrentStockAmount() - getAvailablePlace());
+            setCurrentAmount(getAvailablePlace());
+            int timeLoading = getCurrentAmount() * getTimeLoading();
+            supervisor.shipDoesJob(getShipId(), getJobType(), berth.getId(), timeLoading);
+            try {
+                //Thread.sleep(timeLoading);
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount());
             supervisor.currentShipAmount(getShipId(), getCurrentAmount());
             int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
             setVisitedPort(true);
