@@ -313,6 +313,22 @@ public class Ship implements Runnable {
 
     }
 
+    public void leavePort(Berth berth){
+        if(getVisitedPort()) {
+            supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount());
+            supervisor.currentShipAmount(getShipId(), getCurrentAmount());
+        }
+        int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
+        supervisor.shipJobStatus(getShipId(), getVisitedPort());
+        supervisor.shipLeavesPort(getShipId(), timeLeaveBerth);
+        try {
+            //Thread.sleep(timeLeaveBerth);
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 //    public void unship(Port port) {
 //        Berth berth;
