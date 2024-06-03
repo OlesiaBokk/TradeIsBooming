@@ -1,6 +1,8 @@
 package cy.olesiabokk.tradeisboomingapp.entity;
 
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Ship implements Runnable {
@@ -15,12 +17,14 @@ public class Ship implements Runnable {
     private static final AtomicLong counter = new AtomicLong(0);
     private final JobType jobType;
     private final Supervisor supervisor;
+    private CyclicBarrier barrier;
 
-    public Ship(int maxCapacity, JobType jobType, Supervisor supervisor) {
+    public Ship(int maxCapacity, JobType jobType, Supervisor supervisor, CyclicBarrier barrier) {
         this.id = counter.addAndGet(1);
         this.maxCapacity = maxCapacity;
         this.jobType = jobType;
         this.supervisor = supervisor;
+        this.barrier = barrier;
     }
 
     public Long getShipId() {
@@ -257,45 +261,50 @@ public class Ship implements Runnable {
 
     @Override
     public void run() {
-        try {
-            List<Berth> berths = supervisor.getBerthList();
-            for (int i = 0; i < berths.size(); i++) {
-                if (berths.get(i).needUnloadStock() && getJobType().equals(JobType.LOAD)) {
-                    berths.get(i).lock.lock();
-                    supervisor.berthLocked(berths.get(i).getId(), getShipId());
-                    supervisor.requireBerthUnload(berths.get(i).getId(), berths.get(i).needUnloadStock());
-                    doJobType(berths.get(i));
-                    supervisor.berthUnlocked(berths.get(i).getId(), getShipId());
-                    berths.get(i).lock.unlock();
-                    if (getVisitedPort()) {
-                        return;
-                    }
+        while (!getVisitedPort()) {
+            try {
+                barrier.await();
+                List<Berth> berths = supervisor.getBerthList();
+                for (int i = 0; i < berths.size(); i++) {
+                    if (berths.get(i).needUnloadStock() && getJobType().equals(JobType.LOAD)) {
+                        berths.get(i).lock.lock();
+                        supervisor.berthLocked(berths.get(i).getId(), getShipId());
+                        supervisor.requireBerthUnload(berths.get(i).getId(), berths.get(i).needUnloadStock());
+                        doJobType(berths.get(i));
+                        supervisor.berthUnlocked(berths.get(i).getId(), getShipId());
+                        berths.get(i).lock.unlock();
+                        if (getVisitedPort()) {
+                            return;
+                        }
 
-                } else if (berths.get(i).needLoadStock() && getJobType().equals(JobType.UNSHIP) ||
-                        berths.get(i).needLoadStock() && getJobType().equals(JobType.UNSHIP_LOAD)) {
-                    berths.get(i).lock.lock();
-                    supervisor.berthLocked(berths.get(i).getId(), getShipId());
-                    supervisor.requireBerthLoad(berths.get(i).getId(), berths.get(i).needLoadStock());
-                    doJobType(berths.get(i));
-                    supervisor.berthUnlocked(berths.get(i).getId(), getShipId());
-                    berths.get(i).lock.unlock();
-                    if (getVisitedPort()) {
-                        return;
-                    }
+                    } else if (berths.get(i).needLoadStock() && getJobType().equals(JobType.UNSHIP)) {
+                            // || berths.get(i).needLoadStock() && getJobType().equals(JobType.UNSHIP_LOAD)) {
+                        berths.get(i).lock.lock();
+                        supervisor.berthLocked(berths.get(i).getId(), getShipId());
+                        supervisor.requireBerthLoad(berths.get(i).getId(), berths.get(i).needLoadStock());
+                        doJobType(berths.get(i));
+                        supervisor.berthUnlocked(berths.get(i).getId(), getShipId());
+                        berths.get(i).lock.unlock();
+                        if (getVisitedPort()) {
+                            return;
+                        }
 
-                } else {
-                    berths.get(i).lock.lock();
-                    supervisor.berthLocked(berths.get(i).getId(), getShipId());
-                    doJobType(berths.get(i));
-                    supervisor.berthUnlocked(berths.get(i).getId(), getShipId());
-                    berths.get(i).lock.unlock();
-                    if (getVisitedPort()) {
-                        return;
+                    } else {
+                        berths.get(i).lock.lock();
+                        supervisor.berthLocked(berths.get(i).getId(), getShipId());
+                        doJobType(berths.get(i));
+                        supervisor.berthUnlocked(berths.get(i).getId(), getShipId());
+                        berths.get(i).lock.unlock();
+                        if (getVisitedPort()) {
+                            return;
+                        }
                     }
                 }
+            } catch (InterruptedException e) {
+                System.err.println(e.getMessage());
+            } catch (BrokenBarrierException e){
+                System.err.println(e.getMessage());
             }
-        } catch (InterruptedException e) {
-            System.err.println(e.getMessage());
         }
 
     }
