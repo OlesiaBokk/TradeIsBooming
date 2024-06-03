@@ -94,7 +94,6 @@ public class Ship implements Runnable {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
         // запросить свободное место причала
         supervisor.availableStockPlace(berth.getId(), berth.getAvailPlace());
         supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount());
@@ -102,10 +101,10 @@ public class Ship implements Runnable {
         supervisor.currentShipAmount(getShipId(), getCurrentAmount());
         // проверяем, что после разгрузки корабля останется 0 или больше товаров на корабле, выполняем работу
         if (berth.getAvailPlace() >= getCurrentAmount()) {
-            berth.setCurrStockAmount(berth.getCurrentStockAmount() + getCurrentAmount());
-            setCurrentAmount(0);
             int timeUnship = getCurrentAmount() * getTimeUnloading();
             supervisor.shipDoesJob(getShipId(), getJobType(), berth.getId(), timeUnship);
+            berth.setCurrStockAmount(berth.getCurrentStockAmount() + getCurrentAmount());
+            setCurrentAmount(0);
             try {
                 //Thread.sleep(timeUnship);
                 Thread.sleep(10);
@@ -116,9 +115,9 @@ public class Ship implements Runnable {
         } else if (berth.getAvailPlace() < getCurrentAmount() && berth.getAvailPlace() != 0) {
             int toUnship = berth.getAvailPlace();
             int timeUnship = toUnship * getTimeUnloading();
+            supervisor.shipDoesJob(getShipId(), getJobType(), berth.getId(), timeUnship);
             berth.setCurrStockAmount(berth.getCurrentStockAmount() + toUnship);
             setCurrentAmount(getCurrentAmount() - toUnship);
-            supervisor.shipDoesJob(getShipId(), getJobType(), berth.getId(), timeUnship);
             try {
                 //Thread.sleep(timeUnship);
                 Thread.sleep(10);
@@ -290,8 +289,8 @@ public class Ship implements Runnable {
 
     }
 
-    public void leavePort(Berth berth){
-        if(getVisitedPort()) {
+    public void leavePort(Berth berth) {
+        if (getVisitedPort()) {
             supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount());
             supervisor.currentShipAmount(getShipId(), getCurrentAmount());
         }
