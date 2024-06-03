@@ -13,7 +13,7 @@ public class Generator {
 
     public int getRandomNum(int from, int to){
         int randomNum = getRandomNum();
-        if(randomNum < from || randomNum > from){
+        if(randomNum < from || randomNum > to){
             randomNum = (from + random.nextInt(to - from));
         }
         return randomNum;
