@@ -147,10 +147,10 @@ public class Ship implements Runnable {
         // проверить если своб место на корабле меньше или = кол-ву на складе, выполнить работу
         if (getAvailablePlace() <= berth.getCurrentStockAmount() && berth.getCurrentStockAmount() != 0) {
             int toLoad = getAvailablePlace();
-            berth.setCurrStockAmount(berth.getCurrentStockAmount() - getAvailablePlace());
-            setCurrentAmount(getCurrentAmount() + getAvailablePlace());
             int timeLoading = toLoad * getTimeLoading();
             supervisor.shipDoesJob(getShipId(), getJobType(), berth.getId(), timeLoading);
+            berth.setCurrStockAmount(berth.getCurrentStockAmount() - getAvailablePlace());
+            setCurrentAmount(getCurrentAmount() + getAvailablePlace());
             try {
                 //Thread.sleep(timeLoading);
                 Thread.sleep(10);
@@ -158,12 +158,12 @@ public class Ship implements Runnable {
                 throw new RuntimeException(e);
             }
             setVisitedPort(true);
-        } else if(getAvailablePlace() > berth.getCurrentStockAmount() && berth.getCurrentStockAmount() != 0){
+        } else if (getAvailablePlace() > berth.getCurrentStockAmount() && berth.getCurrentStockAmount() != 0) {
             int toLoad = berth.getCurrentStockAmount();
-            berth.setCurrStockAmount(0);
-            setCurrentAmount(getCurrentAmount() + toLoad);
             int timeLoading = toLoad * getTimeLoading();
             supervisor.shipDoesJob(getShipId(), getJobType(), berth.getId(), timeLoading);
+            berth.setCurrStockAmount(0);
+            setCurrentAmount(getCurrentAmount() + toLoad);
             try {
                 //Thread.sleep(timeLoading);
                 Thread.sleep(10);
