@@ -100,6 +100,11 @@ public class Supervisor {
         printMessage(message);
     }
 
+    public void maxStockCapacity(Long berthId, int maxCapacity) {
+        String message = String.format("Berth %d: Stock max capacity is %d.", berthId, maxCapacity);
+        printMessage(message);
+    }
+
     public void availableStockPlace(Long berthId, int availablePlace) {
         String message = String.format("Berth %d: Stock available place is %d.", berthId, availablePlace);
         printMessage(message);
@@ -122,6 +127,11 @@ public class Supervisor {
 
     public void availableShipPlace(Long shipID, int availPlace) {
         String message = String.format("Ship %d available place: %d", shipID, availPlace);
+        printMessage(message);
+    }
+
+    public void maxShipCapacity(Long shipID, int maxCapacity) {
+        String message = String.format("Ship %d: max capacity is %d.", shipID, maxCapacity);
         printMessage(message);
     }
 
