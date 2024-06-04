@@ -1,17 +1,17 @@
 package cy.olesiabokk.tradeisboomingapp.entity;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Port {
-    private final ArrayList<Berth> berthList;
+    private final List<Berth> berthList;
     private final Supervisor supervisor;
 
-    public Port(Supervisor supervisor, ArrayList<Berth> berthList){
+    public Port(Supervisor supervisor, List<Berth> berthList){
         this.supervisor = supervisor;
         this.berthList = berthList;
     }
 
-    public ArrayList<Berth> getBerthList() {
+    public List<Berth> getBerthList() {
         return berthList;
     }
 
