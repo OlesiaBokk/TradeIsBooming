@@ -145,20 +145,26 @@ public class Supervisor {
         }
     }
 
-    public void shipDoesJob(Long shipId, JobType jobType, Long berthId, long time) {
-        if (jobType.equals(UNSHIP)) {
-            String message = String.format("Ship %d is unshipping in berth %d. Expected unshipping time: %d minutes, %d seconds",
-                    shipId, berthId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
-            printMessage(message);
-        } else if(jobType.equals(LOAD)){
-            String message = String.format("Ship %d is loading in berth %d. Expected loading time: %d minutes, %d seconds",
-                    shipId, berthId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
-            printMessage(message);
-        } else {
-            String message = String.format("Ship %d unships then loads in berth %d. Expected job time: %d minutes, %d seconds",
-                    shipId, berthId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
-            printMessage(message);
-        }
+    public void shipStartsUnship(Long shipId, Long berthId, long time){
+        String message = String.format("Ship %d starts unshipping in berth %d. Expected unshipping time: %d minutes, %d seconds",
+                shipId, berthId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
+        printMessage(message);
+    }
+
+    public void shipStartsLoad(Long shipId, Long berthId, long time){
+        String message = String.format("Ship %d starts loading in berth %d. Expected unshipping time: %d minutes, %d seconds",
+                shipId, berthId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
+        printMessage(message);
+    }
+
+    public void shipEndsUnship(Long shipId, Long berthId){
+        String message = String.format("Ship %d ended unshipping in berth %d.", shipId, berthId);
+        printMessage(message);
+    }
+
+    public void shipEndsLoad(Long shipId, Long berthId){
+        String message = String.format("Ship %d ended loading in berth %d.", shipId, berthId);
+        printMessage(message);
     }
 
     private void printMessage(String message) {
