@@ -317,7 +317,7 @@ public class Ship implements Runnable {
             //Thread.sleep(timeLeaveBerth);
             Thread.sleep(10);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
     }
 }
