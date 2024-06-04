@@ -152,7 +152,7 @@ public class Supervisor {
     }
 
     public void shipStartsLoad(Long shipId, Long berthId, long time){
-        String message = String.format("Ship %d starts loading in berth %d. Expected unshipping time: %d minutes, %d seconds",
+        String message = String.format("Ship %d starts loading in berth %d. Expected loading time: %d minutes, %d seconds",
                 shipId, berthId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
         printMessage(message);
     }
@@ -167,8 +167,17 @@ public class Supervisor {
         printMessage(message);
     }
 
+    public void unshipProgress(int percent){
+        String message = String.format("Unshipping progress %d%%", percent);
+        printMessage(message);
+    }
+
+    public void loadingProgress(int percent){
+        String message = String.format("Loading progress %d%%", percent);
+        printMessage(message);
+    }
+
     private void printMessage(String message) {
         System.out.println(message);
     }
-
 }

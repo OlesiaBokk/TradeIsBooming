@@ -24,6 +24,7 @@ public class Main {
 
         for (int i = 0; i < 15; i++) {
             ships.add(new Ship(generator.addMaxCapacity(199, 501), generator.getRandomJob(), supervisor));
+            ships.get(i).setCurrentAmount(generator.getRandomNum(200, ships.get(i).getMaxCapacity()));
         }
 
         ExecutorService executorService = Executors.newFixedThreadPool(15);
