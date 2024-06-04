@@ -152,7 +152,7 @@ public class Supervisor {
     }
 
     public void shipStartsLoad(Long shipId, Long berthId, long time){
-        String message = String.format("Ship %d starts loading in berth %d. Expected unshipping time: %d minutes, %d seconds",
+        String message = String.format("Ship %d starts loading in berth %d. Expected loading time: %d minutes, %d seconds",
                 shipId, berthId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
         printMessage(message);
     }
