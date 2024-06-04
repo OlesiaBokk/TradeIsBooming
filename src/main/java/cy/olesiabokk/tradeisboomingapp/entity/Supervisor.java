@@ -168,7 +168,7 @@ public class Supervisor {
     }
 
     public void unshipProgress(int percent){
-        String message = String.format("Loading progress %d%%", percent);
+        String message = String.format("Unshipping progress %d%%", percent);
         printMessage(message);
     }
 
