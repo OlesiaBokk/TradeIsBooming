@@ -167,8 +167,17 @@ public class Supervisor {
         printMessage(message);
     }
 
+    public void unshipProgress(int percent){
+        String message = String.format("Loading progress %d%%", percent);
+        printMessage(message);
+    }
+
+    public void loadingProgress(int percent){
+        String message = String.format("Loading progress %d%%", percent);
+        printMessage(message);
+    }
+
     private void printMessage(String message) {
         System.out.println(message);
     }
-
 }
