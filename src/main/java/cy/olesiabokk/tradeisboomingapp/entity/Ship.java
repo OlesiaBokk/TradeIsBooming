@@ -138,7 +138,7 @@ public class Ship implements Runnable {
             //Thread.sleep(timeEnterBerth);
             Thread.sleep(10);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
         // запросить кол-во товаров для разгрузки причала
         supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount());
@@ -157,7 +157,7 @@ public class Ship implements Runnable {
                 //Thread.sleep(timeLoading);
                 Thread.sleep(10);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                System.out.println(e.getMessage());
             }
             supervisor.shipEndsLoad(getShipId(), berth.getId());
             setVisitedPort(true);
@@ -171,7 +171,7 @@ public class Ship implements Runnable {
                 //Thread.sleep(timeLoading);
                 Thread.sleep(10);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                System.out.println(e.getMessage());
             }
             supervisor.shipEndsLoad(getShipId(), berth.getId());
             setVisitedPort(true);
