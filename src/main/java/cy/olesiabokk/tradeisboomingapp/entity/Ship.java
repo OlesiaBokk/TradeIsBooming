@@ -3,6 +3,8 @@ package cy.olesiabokk.tradeisboomingapp.entity;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static cy.olesiabokk.tradeisboomingapp.entity.JobType.*;
+
 public class Ship implements Runnable {
     private final Long id;
     private final int maxCapacity; // вместимость
@@ -106,8 +108,8 @@ public class Ship implements Runnable {
             berth.setCurrStockAmount(berth.getCurrentStockAmount() + getCurrentAmount());
             setCurrentAmount(0);
             try {
-                //Thread.sleep(timeUnship);
-                Thread.sleep(10);
+                //Thread.sleep(10);
+                calculateWorkTime(timeUnship, UNSHIP);
             } catch (InterruptedException e) {
                 System.err.println(e.getMessage());
             }
@@ -120,8 +122,8 @@ public class Ship implements Runnable {
             berth.setCurrStockAmount(berth.getCurrentStockAmount() + toUnship);
             setCurrentAmount(getCurrentAmount() - toUnship);
             try {
-                //Thread.sleep(timeUnship);
-                Thread.sleep(10);
+                //Thread.sleep(10);
+                calculateWorkTime(timeUnship, UNSHIP);
             } catch (InterruptedException e) {
                 System.err.println(e.getMessage());
             }
@@ -154,8 +156,8 @@ public class Ship implements Runnable {
             berth.setCurrStockAmount(berth.getCurrentStockAmount() - getAvailablePlace());
             setCurrentAmount(getCurrentAmount() + getAvailablePlace());
             try {
-                //Thread.sleep(timeLoading);
-                Thread.sleep(10);
+                //Thread.sleep(10);
+                calculateWorkTime(timeLoading, LOAD);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
@@ -168,8 +170,8 @@ public class Ship implements Runnable {
             berth.setCurrStockAmount(0);
             setCurrentAmount(getCurrentAmount() + toLoad);
             try {
-                //Thread.sleep(timeLoading);
-                Thread.sleep(10);
+                //Thread.sleep(10);
+                calculateWorkTime(timeLoading, LOAD);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
@@ -200,8 +202,8 @@ public class Ship implements Runnable {
             berth.setCurrStockAmount(berth.getCurrentStockAmount() + getCurrentAmount());
             setCurrentAmount(0);
             try {
-                //Thread.sleep(timeUnship);
-                Thread.sleep(10);
+                //Thread.sleep(10);
+                calculateWorkTime(timeUnship, UNSHIP);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
@@ -213,8 +215,8 @@ public class Ship implements Runnable {
             berth.setCurrStockAmount(berth.getCurrentStockAmount() + toUnship);
             setCurrentAmount(getCurrentAmount() - toUnship);
             try {
-                //Thread.sleep(timeUnship);
-                Thread.sleep(10);
+                //Thread.sleep(10);
+                calculateWorkTime(timeUnship, UNSHIP);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
@@ -236,8 +238,8 @@ public class Ship implements Runnable {
             berth.setCurrStockAmount(berth.getCurrentStockAmount() - getAvailablePlace());
             setCurrentAmount(getCurrentAmount() + getAvailablePlace());
             try {
-                //Thread.sleep(timeLoading);
-                Thread.sleep(10);
+                //Thread.sleep(10);
+                calculateWorkTime(timeLoading, LOAD);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
@@ -250,8 +252,8 @@ public class Ship implements Runnable {
             berth.setCurrStockAmount(0);
             setCurrentAmount(getCurrentAmount() + toLoad);
             try {
-                //Thread.sleep(timeLoading);
-                Thread.sleep(10);
+                //Thread.sleep(10);
+                calculateWorkTime(timeLoading, LOAD);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
@@ -318,6 +320,21 @@ public class Ship implements Runnable {
             Thread.sleep(10);
         } catch (InterruptedException e) {
             System.err.println(e.getMessage());
+        }
+    }
+
+    public void calculateWorkTime(int workTime, JobType jobType) throws InterruptedException {
+        int toLower = workTime / 10;
+        int progress = 10;
+        while (workTime != 0) {
+            workTime = workTime - toLower;
+            Thread.sleep(toLower);
+            if (jobType.equals(UNSHIP)) {
+                supervisor.unshipProgress(progress);
+            } else {
+                supervisor.loadingProgress(progress);
+            }
+            progress = progress + 10;
         }
     }
 }
