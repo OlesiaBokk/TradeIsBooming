@@ -102,7 +102,7 @@ public class Ship implements Runnable {
         // проверяем, что после разгрузки корабля останется 0 или больше товаров на корабле, выполняем работу
         if (berth.getAvailPlace() >= getCurrentAmount()) {
             int timeUnship = getCurrentAmount() * getTimeUnloading();
-            supervisor.shipDoesJob(getShipId(), getJobType(), berth.getId(), timeUnship);
+            supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship);
             berth.setCurrStockAmount(berth.getCurrentStockAmount() + getCurrentAmount());
             setCurrentAmount(0);
             try {
@@ -111,11 +111,12 @@ public class Ship implements Runnable {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            supervisor.shipEndsUnship(getShipId(), berth.getId());
             setVisitedPort(true);
         } else if (berth.getAvailPlace() < getCurrentAmount() && berth.getAvailPlace() != 0) {
             int toUnship = berth.getAvailPlace();
             int timeUnship = toUnship * getTimeUnloading();
-            supervisor.shipDoesJob(getShipId(), getJobType(), berth.getId(), timeUnship);
+            supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship);
             berth.setCurrStockAmount(berth.getCurrentStockAmount() + toUnship);
             setCurrentAmount(getCurrentAmount() - toUnship);
             try {
@@ -124,6 +125,7 @@ public class Ship implements Runnable {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            supervisor.shipEndsUnship(getShipId(), berth.getId());
             setVisitedPort(true);
         }
         leavePort(berth);
