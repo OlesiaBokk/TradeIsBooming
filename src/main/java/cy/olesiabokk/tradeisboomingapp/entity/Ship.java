@@ -1,8 +1,6 @@
 package cy.olesiabokk.tradeisboomingapp.entity;
 
 import java.util.List;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Ship implements Runnable {
@@ -17,14 +15,12 @@ public class Ship implements Runnable {
     private static final AtomicLong counter = new AtomicLong(0);
     private final JobType jobType;
     private final Supervisor supervisor;
-    private CyclicBarrier barrier;
 
-    public Ship(int maxCapacity, JobType jobType, Supervisor supervisor, CyclicBarrier barrier) {
+    public Ship(int maxCapacity, JobType jobType, Supervisor supervisor) {
         this.id = counter.addAndGet(1);
         this.maxCapacity = maxCapacity;
         this.jobType = jobType;
         this.supervisor = supervisor;
-        this.barrier = barrier;
     }
 
     public Long getShipId() {
@@ -71,7 +67,7 @@ public class Ship implements Runnable {
         this.visitedPort = visitedPort;
     }
 
-    public void doJobType(Berth berth) throws InterruptedException {
+    public void doJobType(Berth berth) {
         switch (jobType) {
             case UNSHIP:
                 unship(berth);
@@ -261,13 +257,12 @@ public class Ship implements Runnable {
 
     @Override
     public void run() {
-        while (!getVisitedPort()) {
-            try {
-                barrier.await();
+        try {
+            while (!getVisitedPort()) {
                 List<Berth> berths = supervisor.getBerthList();
                 for (int i = 0; i < berths.size(); i++) {
+                    berths.get(i).lock.lock();
                     if (berths.get(i).needUnloadStock() && getJobType().equals(JobType.LOAD)) {
-                        berths.get(i).lock.lock();
                         supervisor.berthLocked(berths.get(i).getId(), getShipId());
                         supervisor.requireBerthUnload(berths.get(i).getId(), berths.get(i).needUnloadStock());
                         doJobType(berths.get(i));
@@ -278,8 +273,6 @@ public class Ship implements Runnable {
                         }
 
                     } else if (berths.get(i).needLoadStock() && getJobType().equals(JobType.UNSHIP)) {
-                            // || berths.get(i).needLoadStock() && getJobType().equals(JobType.UNSHIP_LOAD)) {
-                        berths.get(i).lock.lock();
                         supervisor.berthLocked(berths.get(i).getId(), getShipId());
                         supervisor.requireBerthLoad(berths.get(i).getId(), berths.get(i).needLoadStock());
                         doJobType(berths.get(i));
@@ -290,7 +283,6 @@ public class Ship implements Runnable {
                         }
 
                     } else {
-                        berths.get(i).lock.lock();
                         supervisor.berthLocked(berths.get(i).getId(), getShipId());
                         doJobType(berths.get(i));
                         supervisor.berthUnlocked(berths.get(i).getId(), getShipId());
@@ -300,13 +292,10 @@ public class Ship implements Runnable {
                         }
                     }
                 }
-            } catch (InterruptedException e) {
-                System.err.println(e.getMessage());
-            } catch (BrokenBarrierException e){
-                System.err.println(e.getMessage());
             }
+        } catch (RuntimeException e) {
+            System.err.println(e.getMessage());
         }
-
     }
 
     public void leavePort(Berth berth) {
@@ -324,80 +313,4 @@ public class Ship implements Runnable {
             throw new RuntimeException(e);
         }
     }
-
-
-//    public void unship(Port port) {
-//        Berth berth;
-//        for (int i = 0; i < port.getBerthList().size(); i++) {
-//            int freeStockPlace = port.getBerthList().get(i).getStock().getAvailablePlace();
-//            if (freeStockPlace > 3000) {
-//                berth = port.getBerthList().get(i);
-//                int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
-//                // 1. get new curr Amount of goods in Stock
-//                berth.setCurrStockAmount(getCurrentAmount());
-//                int timeToUnload = getCurrentAmount() * getTimeUnloading();
-//                //2. set new curr Amount of goods at Ship
-//                setCurrentAmount(0);
-//                int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
-//                setVisitedPort(true);
-//                break;
-//            }
-//        }
-//        if (!visitedPort) {
-//            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
-//        }
-//    }
-//    public void load(Port port, Long berthID) {
-//        Optional<Berth> optional = port.getBerthList().stream()
-//                .filter(b -> b.getId().equals(berthID))
-//                .findAny();
-//        if (optional.isPresent()) {
-//            Berth berth = optional.get();
-//            int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
-//            // 1. get new curr Amount of goods in Stock
-//            int freeShipPlace = getAvailablePlace();
-//            berth.setCurrStockAmount(berth.getCurrentStockAmount() - freeShipPlace);
-//            int timeLoading = freeShipPlace * getTimeLoading();
-//            //2. set new curr Amount of goods at Ship
-//            setCurrentAmount(freeShipPlace);
-//            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
-//            setVisitedPort(true);
-//        } else {
-//            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
-//        }
-//    }
-
-//    public void unshipThenLoad(Port port) {
-//        Berth berth;
-//        for (int i = 0; i < port.getBerthList().size(); i++) {
-//            int freeStockPlace = port.getBerthList().get(i).getStock().getAvailablePlace();
-//            if (freeStockPlace > 3000) {
-//                berth = port.getBerthList().get(i);
-//                int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
-//                // 1. get new curr Amount of goods in Stock
-//                berth.setCurrStockAmount(getCurrentAmount());
-//                int timeToUnload = getCurrentAmount() * getTimeUnloading();
-//                //2. set new curr Amount of goods at Ship
-//                setCurrentAmount(0);
-//                // 3. get new curr Amount of goods in Stock
-//                int freeShipPlace = getAvailablePlace();
-//                berth.setCurrStockAmount(berth.getCurrentStockAmount() - freeShipPlace);
-//                int timeLoading = freeShipPlace * getTimeLoading();
-//                //4. set new curr Amount of goods at Ship
-//                setCurrentAmount(freeShipPlace);
-//                int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
-//                setVisitedPort(true);
-//                break;
-//            }
-//        }
-//        if (!visitedPort) {
-//            int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
-//        }
-//    }
-
-//    @Override
-//    public void run() {
-//        System.out.println("Ship work started");
-//        System.out.println(getShipId() + " " + getJobType());
-//    }
 }
