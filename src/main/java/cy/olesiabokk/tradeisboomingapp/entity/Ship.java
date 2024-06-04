@@ -92,7 +92,7 @@ public class Ship implements Runnable {
             //Thread.sleep(timeEnterBerth);
             Thread.sleep(10);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         // запросить свободное место причала
         supervisor.availableStockPlace(berth.getId(), berth.getAvailPlace());
@@ -109,7 +109,7 @@ public class Ship implements Runnable {
                 //Thread.sleep(timeUnship);
                 Thread.sleep(10);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                System.err.println(e.getMessage());
             }
             supervisor.shipEndsUnship(getShipId(), berth.getId());
             setVisitedPort(true);
@@ -123,7 +123,7 @@ public class Ship implements Runnable {
                 //Thread.sleep(timeUnship);
                 Thread.sleep(10);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                System.err.println(e.getMessage());
             }
             supervisor.shipEndsUnship(getShipId(), berth.getId());
             setVisitedPort(true);
