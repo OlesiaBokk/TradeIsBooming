@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         Generator generator = new Generator();
         List<Ship> ships = new ArrayList<>();
-        ArrayList<Berth> berthList = new ArrayList<>();
+        List<Berth> berthList = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             berthList.add(new Berth(new Stock(generator.addMaxCapacity(3999, 10001))));
             berthList.get(i).setCurrStockAmount(generator.getRandomNum(4000, berthList.get(i).getMaxStockCapacity()));
