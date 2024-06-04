@@ -186,7 +186,7 @@ public class Ship implements Runnable {
             //Thread.sleep(timeEnterBerth);
             Thread.sleep(10);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
         // запросить свободное место причала
         supervisor.availableStockPlace(berth.getId(), berth.getAvailPlace());
@@ -203,7 +203,7 @@ public class Ship implements Runnable {
                 //Thread.sleep(timeUnship);
                 Thread.sleep(10);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                System.out.println(e.getMessage());
             }
             supervisor.shipEndsUnship(getShipId(), berth.getId());
         } else if (berth.getAvailPlace() < getCurrentAmount() && berth.getAvailPlace() != 0) {
@@ -216,11 +216,10 @@ public class Ship implements Runnable {
                 //Thread.sleep(timeUnship);
                 Thread.sleep(10);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                System.out.println(e.getMessage());
             }
             supervisor.shipEndsUnship(getShipId(), berth.getId());
         }
-
 
         ////// LOADING
         // запросить кол-во товаров для разгрузки причала
@@ -240,7 +239,7 @@ public class Ship implements Runnable {
                 //Thread.sleep(timeLoading);
                 Thread.sleep(10);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                System.out.println(e.getMessage());
             }
             supervisor.shipEndsLoad(getShipId(), berth.getId());
             setVisitedPort(true);
@@ -254,7 +253,7 @@ public class Ship implements Runnable {
                 //Thread.sleep(timeLoading);
                 Thread.sleep(10);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                System.out.println(e.getMessage());
             }
             supervisor.shipEndsLoad(getShipId(), berth.getId());
             setVisitedPort(true);
