@@ -2,14 +2,16 @@ package cy.olesiabokk.tradeisboomingapp.entity;
 
 import java.util.List;
 
-import static cy.olesiabokk.tradeisboomingapp.entity.JobType.LOAD;
-import static cy.olesiabokk.tradeisboomingapp.entity.JobType.UNSHIP;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Supervisor {
     private List<Berth> berthList;
     private Berth berth;
     private Ship ship;
     private Stock stock;
+    private static Logger logger = LogManager.getLogger(Supervisor.class);
 
     public List<Berth> getBerthList() {
         return berthList;
@@ -179,5 +181,6 @@ public class Supervisor {
 
     private void printMessage(String message) {
         System.out.println(message);
+        logger.log(Level.INFO, message);
     }
 }
