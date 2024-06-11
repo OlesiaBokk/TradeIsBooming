@@ -1,10 +1,18 @@
 package cy.olesiabokk.tradeisboomingapp.entity;
 
-import java.util.List;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.FileAppender;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.layout.PatternLayout;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 public class Supervisor {
     private List<Berth> berthList;
@@ -12,6 +20,10 @@ public class Supervisor {
     private Ship ship;
     private Stock stock;
     private static Logger logger = LogManager.getLogger(Supervisor.class);
+
+    public Supervisor(List<Berth> list){
+        this.berthList = list;
+    }
 
     public List<Berth> getBerthList() {
         return berthList;
@@ -73,110 +85,134 @@ public class Supervisor {
         return ship.getVisitedPort();
     }
 
-    public void berthLocked(Long berthId, Long shipId) {
+    public String berthLocked(Long berthId, Long shipId) {
         String message = String.format("Berth %d is locked by Ship %d.", berthId, shipId);
         printMessage(message);
+        return message;
     }
 
-    public void berthUnlocked(Long berthId, Long shipId) {
-        String message = String.format("Ship %d unlocked Berth %d.",shipId, berthId);
+    public String berthUnlocked(Long berthId, Long shipId) {
+        String message = String.format("Ship %d unlocked Berth %d.", shipId, berthId);
         printMessage(message);
+        return message;
     }
 
-    public void requireBerthUnload(Long berthId, boolean needUnload) {
+    public String requireBerthUnload(Long berthId, boolean needUnload) {
         if (needUnload) {
             String message = String.format("Berth %d: Stock unloading required.", berthId);
             printMessage(message);
+            return message;
+        } else {
+            return null;
         }
     }
 
-    public void requireBerthLoad(Long berthId, boolean needLoad) {
+    public String requireBerthLoad(Long berthId, boolean needLoad) {
         if (needLoad) {
             String message = String.format("Berth %d: Stock loading required.", berthId);
             printMessage(message);
+            return message;
+        } else {
+            return null;
         }
     }
 
-    public void currentStockAmount(Long berthId, int currentAmount) {
+    public String currentStockAmount(Long berthId, int currentAmount) {
         String message = String.format("Berth %d: Stock current amount of goods is %d.", berthId, currentAmount);
         printMessage(message);
+        return message;
     }
 
-    public void maxStockCapacity(Long berthId, int maxCapacity) {
+    public String maxStockCapacity(Long berthId, int maxCapacity) {
         String message = String.format("Berth %d: Stock max capacity is %d.", berthId, maxCapacity);
         printMessage(message);
+        return message;
     }
 
-    public void availableStockPlace(Long berthId, int availablePlace) {
+    public String availableStockPlace(Long berthId, int availablePlace) {
         String message = String.format("Berth %d: Stock available place is %d.", berthId, availablePlace);
         printMessage(message);
+        return message;
     }
 
-    public void shipEntersPort(Long shipId, JobType jobType, long time) {
+    public String shipEntersPort(Long shipId, JobType jobType, long time) {
         String message = String.format("Ship %d enters port. Job type is " + jobType + " . Expected shipping time: %d minutes, %d seconds", shipId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
         printMessage(message);
+        return message;
     }
 
-    public void shipLeavesPort(Long shipId, long time) {
+    public String shipLeavesPort(Long shipId, long time) {
         String message = String.format("Ship %d leaves port. Expected departure time: %d minutes, %d seconds", shipId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
         printMessage(message);
+        return message;
     }
 
-    public void currentShipAmount(Long shipID, int currAmount) {
+    public String currentShipAmount(Long shipID, int currAmount) {
         String message = String.format("Ship %d current amount of Goods: %d", shipID, currAmount);
         printMessage(message);
+        return message;
     }
 
-    public void availableShipPlace(Long shipID, int availPlace) {
+    public String availableShipPlace(Long shipID, int availPlace) {
         String message = String.format("Ship %d available place: %d", shipID, availPlace);
         printMessage(message);
+        return message;
     }
 
-    public void maxShipCapacity(Long shipID, int maxCapacity) {
+    public String maxShipCapacity(Long shipID, int maxCapacity) {
         String message = String.format("Ship %d: max capacity is %d.", shipID, maxCapacity);
         printMessage(message);
+        return message;
     }
 
-    public void shipJobStatus(Long shipID, boolean visitedPort) {
+    public String shipJobStatus(Long shipID, boolean visitedPort) {
         if (visitedPort) {
             String message = String.format("Ship %d done its job", shipID);
             printMessage(message);
+            return message;
         } else {
             String message = String.format("Ship %d cannot do its job", shipID);
             printMessage(message);
+            return message;
         }
     }
 
-    public void shipStartsUnship(Long shipId, Long berthId, long time){
+    public String shipStartsUnship(Long shipId, Long berthId, long time) {
         String message = String.format("Ship %d starts unshipping in berth %d. Expected unshipping time: %d minutes, %d seconds",
                 shipId, berthId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
         printMessage(message);
+        return message;
     }
 
-    public void shipStartsLoad(Long shipId, Long berthId, long time){
+    public String shipStartsLoad(Long shipId, Long berthId, long time) {
         String message = String.format("Ship %d starts loading in berth %d. Expected loading time: %d minutes, %d seconds",
                 shipId, berthId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
         printMessage(message);
+        return message;
     }
 
-    public void shipEndsUnship(Long shipId, Long berthId){
+    public String shipEndsUnship(Long shipId, Long berthId) {
         String message = String.format("Ship %d ended unshipping in berth %d.", shipId, berthId);
         printMessage(message);
+        return message;
     }
 
-    public void shipEndsLoad(Long shipId, Long berthId){
+    public String shipEndsLoad(Long shipId, Long berthId) {
         String message = String.format("Ship %d ended loading in berth %d.", shipId, berthId);
         printMessage(message);
+        return message;
     }
 
-    public void unshipProgress(int percent){
+    public String unshipProgress(Long berthId, int percent) {
         String message = String.format("Unshipping progress %d%%", percent);
         printMessage(message);
+        return message;
     }
 
-    public void loadingProgress(int percent){
+    public String loadingProgress(Long berthId, int percent) {
         String message = String.format("Loading progress %d%%", percent);
         printMessage(message);
+        return message;
     }
 
     private void printMessage(String message) {
