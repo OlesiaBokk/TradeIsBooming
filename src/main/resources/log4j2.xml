@@ -7,18 +7,10 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="${supervisor}"/>
         </Console>
-        <File name="MyFile" fileName="logs/app.txt">
-            <PatternLayout pattern="${supervisor}"/>
-        </File>
     </Appenders>
     <Loggers>
         <Root level="info">
-            <AppenderRef ref="MyFile"/>
             <AppenderRef ref="Console"/>
         </Root>
-        <Logger name="supervisor" level="info" additivity="false">
-            <AppenderRef ref="MyFile"/>
-            <AppenderRef ref="Console"/>
-        </Logger>
     </Loggers>
 </Configuration>
