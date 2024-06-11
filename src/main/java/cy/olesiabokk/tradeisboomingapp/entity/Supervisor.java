@@ -183,4 +183,55 @@ public class Supervisor {
         System.out.println(message);
         logger.log(Level.INFO, message);
     }
+
+    public void printBerthLog(Berth berth, String message) {
+        Logger berthLogger = LogManager.getLogger("Berth " + berth.getId());
+        berthLogger.info(message);
+    }
+
+    public void setLoggerToBerth(List<Berth> berthList) {
+        LoggerContext context = (LoggerContext) LogManager.getContext(false);
+        Configuration config = context.getConfiguration();
+        Calendar calendar = new GregorianCalendar();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy");
+
+        for (Berth berth : berthList) {
+            StringBuilder sb = new StringBuilder();
+            String loggerName = "Berth " + berth.getId();
+            String fileName = sb.append("logs/Berth ")
+                    .append(berth.getId())
+                    .append(" ")
+                    .append(dateFormat.format(calendar.getTime()))
+                    .append(".txt").toString();
+
+            FileAppender appender = FileAppender.createAppender(
+                    fileName,
+                    "true",
+                    "false",
+                    "File - " + berth.getId(),
+                    "true",
+                    "false",
+                    "false",
+                    "5000",
+                    PatternLayout.createLayout("%d [%t] %-5level %logger - %m%n",
+                            config,
+                            null,
+                            null,
+                            false,
+                            false,
+                            null, null),
+                    null,
+                    "false",
+                    null,
+                    config
+            );
+            appender.start();
+            config.addAppender(appender);
+
+            LoggerConfig loggerConfig = new LoggerConfig(loggerName, Level.INFO, true);
+            loggerConfig.addAppender(appender, Level.INFO, null);
+            config.addLogger(loggerName, loggerConfig);
+        }
+        context.updateLoggers();
+    }
 }
