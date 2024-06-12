@@ -249,7 +249,7 @@ public class Supervisor {
                     "false",
                     "false",
                     "5000",
-                    PatternLayout.createLayout("%d [%t] %-5level %logger - %m%n",
+                    PatternLayout.createLayout("%d{HH:mm:ss} - %m%n",
                             config,
                             null,
                             null,
