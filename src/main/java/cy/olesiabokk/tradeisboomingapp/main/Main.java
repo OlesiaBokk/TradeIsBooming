@@ -13,8 +13,8 @@ public class Main {
         Generator generator = new Generator();
         List<Berth> berthList = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            berthList.add(new Berth(new Stock(generator.addMaxCapacity(4000, 10001))));
-            berthList.get(i).setCurrStockAmount(generator.getRandomNum(4000, berthList.get(i).getMaxStockCapacity()));
+            berthList.add(new Berth(new Stock(generator.addMaxCapacity(4000, 10000))));
+            berthList.get(i).setCurrStockAmount(generator.getRandomNum(0, berthList.get(i).getMaxStockCapacity()));
         }
 
         Supervisor supervisor = new Supervisor(berthList);
@@ -22,8 +22,8 @@ public class Main {
 
         List<Ship> ships = new ArrayList<>();
         for (int i = 0; i < 150; i++) {
-            ships.add(new Ship(generator.addMaxCapacity(200, 501), generator.getRandomJob(), supervisor));
-            ships.get(i).setCurrentAmount(generator.getRandomNum(200, ships.get(i).getMaxCapacity()));
+            ships.add(new Ship(generator.addMaxCapacity(200, 500), generator.getRandomJob(), supervisor));
+            ships.get(i).setCurrentAmount(generator.getRandomNum(0, ships.get(i).getMaxCapacity()));
         }
 
         ExecutorService executorService = Executors.newFixedThreadPool(45);
