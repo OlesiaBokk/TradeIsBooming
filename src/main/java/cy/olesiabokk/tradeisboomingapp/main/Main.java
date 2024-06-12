@@ -11,23 +11,22 @@ import java.util.concurrent.Executors;
 public class Main {
     public static void main(String[] args) {
         Generator generator = new Generator();
-        List<Ship> ships = new ArrayList<>();
         List<Berth> berthList = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            berthList.add(new Berth(new Stock(generator.addMaxCapacity(3999, 10001))));
+            berthList.add(new Berth(new Stock(generator.addMaxCapacity(4000, 10001))));
             berthList.get(i).setCurrStockAmount(generator.getRandomNum(4000, berthList.get(i).getMaxStockCapacity()));
         }
 
-        Supervisor supervisor = new Supervisor();
-        supervisor.setBerthList(berthList);
+        Supervisor supervisor = new Supervisor(berthList);
         Port port = new Port(supervisor, berthList);
 
-        for (int i = 0; i < 15; i++) {
-            ships.add(new Ship(generator.addMaxCapacity(199, 501), generator.getRandomJob(), supervisor));
+        List<Ship> ships = new ArrayList<>();
+        for (int i = 0; i < 150; i++) {
+            ships.add(new Ship(generator.addMaxCapacity(200, 501), generator.getRandomJob(), supervisor));
             ships.get(i).setCurrentAmount(generator.getRandomNum(200, ships.get(i).getMaxCapacity()));
         }
 
-        ExecutorService executorService = Executors.newFixedThreadPool(15);
+        ExecutorService executorService = Executors.newFixedThreadPool(45);
         for (Ship ship : ships) {
             executorService.submit(ship);
         }

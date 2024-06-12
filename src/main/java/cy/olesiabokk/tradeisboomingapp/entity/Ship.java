@@ -89,7 +89,7 @@ public class Ship implements Runnable {
 
     public void unship(Berth berth) {
         int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
-        supervisor.shipEntersPort(getShipId(), getJobType(), timeEnterBerth);
+        supervisor.printBerthLog(berth, supervisor.shipEntersPort(getShipId(), getJobType(), timeEnterBerth));
         try {
             //Thread.sleep(timeEnterBerth);
             Thread.sleep(10);
@@ -97,37 +97,37 @@ public class Ship implements Runnable {
             System.err.println(e.getMessage());
         }
         // запросить свободное место причала
-        supervisor.availableStockPlace(berth.getId(), berth.getAvailPlace());
-        supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount());
+        supervisor.printBerthLog(berth, supervisor.availableStockPlace(berth.getId(), berth.getAvailPlace()));
+        supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
         // запросить кол-во товаров на корабле
-        supervisor.currentShipAmount(getShipId(), getCurrentAmount());
+        supervisor.printBerthLog(berth, supervisor.currentShipAmount(getShipId(), getCurrentAmount()));
         // проверяем, что после разгрузки корабля останется 0 или больше товаров на корабле, выполняем работу
         if (berth.getAvailPlace() >= getCurrentAmount()) {
             int timeUnship = getCurrentAmount() * getTimeUnloading();
-            supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship);
+            supervisor.printBerthLog(berth, supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship));
             berth.setCurrStockAmount(berth.getCurrentStockAmount() + getCurrentAmount());
             setCurrentAmount(0);
             try {
-                //Thread.sleep(10);
-                calculateWorkTime(timeUnship, UNSHIP);
+                Thread.sleep(10);
+                //calculateWorkTime(berth, timeUnship, UNSHIP);
             } catch (InterruptedException e) {
                 System.err.println(e.getMessage());
             }
-            supervisor.shipEndsUnship(getShipId(), berth.getId());
+            supervisor.printBerthLog(berth, supervisor.shipEndsUnship(getShipId(), berth.getId()));
             setVisitedPort(true);
         } else if (berth.getAvailPlace() < getCurrentAmount() && berth.getAvailPlace() != 0) {
             int toUnship = berth.getAvailPlace();
             int timeUnship = toUnship * getTimeUnloading();
-            supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship);
+            supervisor.printBerthLog(berth, supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship));
             berth.setCurrStockAmount(berth.getCurrentStockAmount() + toUnship);
             setCurrentAmount(getCurrentAmount() - toUnship);
             try {
-                //Thread.sleep(10);
-                calculateWorkTime(timeUnship, UNSHIP);
+                Thread.sleep(10);
+                //calculateWorkTime(berth, timeUnship, UNSHIP);
             } catch (InterruptedException e) {
                 System.err.println(e.getMessage());
             }
-            supervisor.shipEndsUnship(getShipId(), berth.getId());
+            supervisor.printBerthLog(berth, supervisor.shipEndsUnship(getShipId(), berth.getId()));
             setVisitedPort(true);
         }
         leavePort(berth);
@@ -135,7 +135,7 @@ public class Ship implements Runnable {
 
     public void load(Berth berth) {
         int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
-        supervisor.shipEntersPort(getShipId(), getJobType(), timeEnterBerth);
+        supervisor.printBerthLog(berth, supervisor.shipEntersPort(getShipId(), getJobType(), timeEnterBerth));
         try {
             //Thread.sleep(timeEnterBerth);
             Thread.sleep(10);
@@ -143,39 +143,39 @@ public class Ship implements Runnable {
             System.out.println(e.getMessage());
         }
         // запросить кол-во товаров для разгрузки причала
-        supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount());
-        supervisor.maxShipCapacity(getShipId(), getMaxCapacity());
+        supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
+        supervisor.printBerthLog(berth, supervisor.maxShipCapacity(getShipId(), getMaxCapacity()));
         // запросить свободное место на корабле
-        supervisor.availableShipPlace(getShipId(), getAvailablePlace());
-        supervisor.currentShipAmount(getShipId(), getCurrentAmount());
+        supervisor.printBerthLog(berth, supervisor.availableShipPlace(getShipId(), getAvailablePlace()));
+        supervisor.printBerthLog(berth, supervisor.currentShipAmount(getShipId(), getCurrentAmount()));
         // проверить если своб место на корабле меньше или = кол-ву на складе, выполнить работу
         if (getAvailablePlace() <= berth.getCurrentStockAmount() && berth.getCurrentStockAmount() != 0) {
             int toLoad = getAvailablePlace();
             int timeLoading = toLoad * getTimeLoading();
-            supervisor.shipStartsLoad(getShipId(), berth.getId(), timeLoading);
+            supervisor.printBerthLog(berth, supervisor.shipStartsLoad(getShipId(), berth.getId(), timeLoading));
             berth.setCurrStockAmount(berth.getCurrentStockAmount() - getAvailablePlace());
             setCurrentAmount(getCurrentAmount() + getAvailablePlace());
             try {
-                //Thread.sleep(10);
-                calculateWorkTime(timeLoading, LOAD);
+                Thread.sleep(10);
+                //calculateWorkTime(berth, timeLoading, LOAD);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
-            supervisor.shipEndsLoad(getShipId(), berth.getId());
+            supervisor.printBerthLog(berth, supervisor.shipEndsLoad(getShipId(), berth.getId()));
             setVisitedPort(true);
         } else if (getAvailablePlace() > berth.getCurrentStockAmount() && berth.getCurrentStockAmount() != 0) {
             int toLoad = berth.getCurrentStockAmount();
             int timeLoading = toLoad * getTimeLoading();
-            supervisor.shipStartsLoad(getShipId(), berth.getId(), timeLoading);
+            supervisor.printBerthLog(berth, supervisor.shipStartsLoad(getShipId(), berth.getId(), timeLoading));
             berth.setCurrStockAmount(0);
             setCurrentAmount(getCurrentAmount() + toLoad);
             try {
-                //Thread.sleep(10);
-                calculateWorkTime(timeLoading, LOAD);
+                Thread.sleep(10);
+                //calculateWorkTime(berth, timeLoading, LOAD);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
-            supervisor.shipEndsLoad(getShipId(), berth.getId());
+            supervisor.printBerthLog(berth, supervisor.shipEndsLoad(getShipId(), berth.getId()));
             setVisitedPort(true);
         }
         leavePort(berth);
@@ -183,7 +183,7 @@ public class Ship implements Runnable {
 
     public void unshipThenLoad(Berth berth) {
         int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
-        supervisor.shipEntersPort(getShipId(), getJobType(), timeEnterBerth);
+        supervisor.printBerthLog(berth, supervisor.shipEntersPort(getShipId(), getJobType(), timeEnterBerth));
         try {
             //Thread.sleep(timeEnterBerth);
             Thread.sleep(10);
@@ -191,73 +191,73 @@ public class Ship implements Runnable {
             System.out.println(e.getMessage());
         }
         // запросить свободное место причала
-        supervisor.availableStockPlace(berth.getId(), berth.getAvailPlace());
-        supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount());
+        supervisor.printBerthLog(berth, supervisor.availableStockPlace(berth.getId(), berth.getAvailPlace()));
+        supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
         // запросить кол-во товаров на корабле
-        supervisor.currentShipAmount(getShipId(), getCurrentAmount());
+        supervisor.printBerthLog(berth, supervisor.currentShipAmount(getShipId(), getCurrentAmount()));
         // проверяем, что после разгрузки корабля останется 0 или больше товаров на корабле, выполняем работу
         if (berth.getAvailPlace() >= getCurrentAmount()) {
             int timeUnship = getCurrentAmount() * getTimeUnloading();
-            supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship);
+            supervisor.printBerthLog(berth, supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship));
             berth.setCurrStockAmount(berth.getCurrentStockAmount() + getCurrentAmount());
             setCurrentAmount(0);
             try {
-                //Thread.sleep(10);
-                calculateWorkTime(timeUnship, UNSHIP);
+                Thread.sleep(10);
+                //calculateWorkTime(berth, timeUnship, UNSHIP);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
-            supervisor.shipEndsUnship(getShipId(), berth.getId());
+            supervisor.printBerthLog(berth, supervisor.shipEndsUnship(getShipId(), berth.getId()));
         } else if (berth.getAvailPlace() < getCurrentAmount() && berth.getAvailPlace() != 0) {
             int toUnship = berth.getAvailPlace();
             int timeUnship = toUnship * getTimeUnloading();
-            supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship);
+            supervisor.printBerthLog(berth, supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship));
             berth.setCurrStockAmount(berth.getCurrentStockAmount() + toUnship);
             setCurrentAmount(getCurrentAmount() - toUnship);
             try {
-                //Thread.sleep(10);
-                calculateWorkTime(timeUnship, UNSHIP);
+                Thread.sleep(10);
+                //calculateWorkTime(berth, timeUnship, UNSHIP);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
-            supervisor.shipEndsUnship(getShipId(), berth.getId());
+            supervisor.printBerthLog(berth, supervisor.shipEndsUnship(getShipId(), berth.getId()));
         }
 
         ////// LOADING
         // запросить кол-во товаров для разгрузки причала
-        supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount());
-        supervisor.maxShipCapacity(getShipId(), getMaxCapacity());
+        supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
+        supervisor.printBerthLog(berth, supervisor.maxShipCapacity(getShipId(), getMaxCapacity()));
         // запросить свободное место на корабле
-        supervisor.availableShipPlace(getShipId(), getAvailablePlace());
-        supervisor.currentShipAmount(getShipId(), getCurrentAmount());
+        supervisor.printBerthLog(berth, supervisor.availableShipPlace(getShipId(), getAvailablePlace()));
+        supervisor.printBerthLog(berth, supervisor.currentShipAmount(getShipId(), getCurrentAmount()));
         // проверить если своб место на корабле меньше или = кол-ву на складе, выполнить работу
         if (getAvailablePlace() <= berth.getCurrentStockAmount() && berth.getCurrentStockAmount() != 0) {
             int toLoad = getAvailablePlace();
             int timeLoading = toLoad * getTimeLoading();
-            supervisor.shipStartsLoad(getShipId(), berth.getId(), timeLoading);
+            supervisor.printBerthLog(berth, supervisor.shipStartsLoad(getShipId(), berth.getId(), timeLoading));
             berth.setCurrStockAmount(berth.getCurrentStockAmount() - getAvailablePlace());
             setCurrentAmount(getCurrentAmount() + getAvailablePlace());
             try {
-                //Thread.sleep(10);
-                calculateWorkTime(timeLoading, LOAD);
+                Thread.sleep(10);
+                //calculateWorkTime(berth, timeLoading, LOAD);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
-            supervisor.shipEndsLoad(getShipId(), berth.getId());
+            supervisor.printBerthLog(berth, supervisor.shipEndsLoad(getShipId(), berth.getId()));
             setVisitedPort(true);
         } else if (getAvailablePlace() > berth.getCurrentStockAmount() && berth.getCurrentStockAmount() != 0) {
             int toLoad = berth.getCurrentStockAmount();
             int timeLoading = toLoad * getTimeLoading();
-            supervisor.shipStartsLoad(getShipId(), berth.getId(), timeLoading);
+            supervisor.printBerthLog(berth, supervisor.shipStartsLoad(getShipId(), berth.getId(), timeLoading));
             berth.setCurrStockAmount(0);
             setCurrentAmount(getCurrentAmount() + toLoad);
             try {
-                //Thread.sleep(10);
-                calculateWorkTime(timeLoading, LOAD);
+                Thread.sleep(10);
+//                calculateWorkTime(berth, timeLoading, LOAD);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
-            supervisor.shipEndsLoad(getShipId(), berth.getId());
+            supervisor.printBerthLog(berth, supervisor.shipEndsLoad(getShipId(), berth.getId()));
             setVisitedPort(true);
         }
         leavePort(berth);
@@ -269,32 +269,34 @@ public class Ship implements Runnable {
         try {
             while (!getVisitedPort()) {
                 List<Berth> berths = supervisor.getBerthList();
-                for (int i = 0; i < berths.size(); i++) {
+                supervisor.setLoggerToBerth(berths);
+
+                for (int i = 0; i <= berths.size(); i++) {
                     berths.get(i).lock.lock();
                     if (berths.get(i).needUnloadStock() && getJobType().equals(JobType.LOAD)) {
-                        supervisor.berthLocked(berths.get(i).getId(), getShipId());
-                        supervisor.requireBerthUnload(berths.get(i).getId(), berths.get(i).needUnloadStock());
+                        supervisor.printBerthLog(berths.get(i), supervisor.berthLocked(berths.get(i).getId(), getShipId()));
+                        supervisor.printBerthLog(berths.get(i), supervisor.requireBerthUnload(berths.get(i).getId(), berths.get(i).needUnloadStock()));
                         doJobType(berths.get(i));
-                        supervisor.berthUnlocked(berths.get(i).getId(), getShipId());
+                        supervisor.printBerthLog(berths.get(i), supervisor.berthUnlocked(berths.get(i).getId(), getShipId()));
                         berths.get(i).lock.unlock();
                         if (getVisitedPort()) {
                             return;
                         }
 
                     } else if (berths.get(i).needLoadStock() && getJobType().equals(JobType.UNSHIP)) {
-                        supervisor.berthLocked(berths.get(i).getId(), getShipId());
-                        supervisor.requireBerthLoad(berths.get(i).getId(), berths.get(i).needLoadStock());
+                        supervisor.printBerthLog(berths.get(i), supervisor.berthLocked(berths.get(i).getId(), getShipId()));
+                        supervisor.printBerthLog(berths.get(i), supervisor.requireBerthLoad(berths.get(i).getId(), berths.get(i).needLoadStock()));
                         doJobType(berths.get(i));
-                        supervisor.berthUnlocked(berths.get(i).getId(), getShipId());
+                        supervisor.printBerthLog(berths.get(i), supervisor.berthUnlocked(berths.get(i).getId(), getShipId()));
                         berths.get(i).lock.unlock();
                         if (getVisitedPort()) {
                             return;
                         }
 
                     } else {
-                        supervisor.berthLocked(berths.get(i).getId(), getShipId());
+                        supervisor.printBerthLog(berths.get(i), supervisor.berthLocked(berths.get(i).getId(), getShipId()));
                         doJobType(berths.get(i));
-                        supervisor.berthUnlocked(berths.get(i).getId(), getShipId());
+                        supervisor.printBerthLog(berths.get(i), supervisor.berthUnlocked(berths.get(i).getId(), getShipId()));
                         berths.get(i).lock.unlock();
                         if (getVisitedPort()) {
                             return;
@@ -309,12 +311,12 @@ public class Ship implements Runnable {
 
     public void leavePort(Berth berth) {
         if (getVisitedPort()) {
-            supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount());
-            supervisor.currentShipAmount(getShipId(), getCurrentAmount());
+            supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
+            supervisor.printBerthLog(berth, supervisor.currentShipAmount(getShipId(), getCurrentAmount()));
         }
         int timeLeaveBerth = getTimeLeaveBerth() * getCurrentAmount();
-        supervisor.shipJobStatus(getShipId(), getVisitedPort());
-        supervisor.shipLeavesPort(getShipId(), timeLeaveBerth);
+        supervisor.printBerthLog(berth, supervisor.shipJobStatus(getShipId(), getVisitedPort()));
+        supervisor.printBerthLog(berth, supervisor.shipLeavesPort(getShipId(), timeLeaveBerth));
         try {
             //Thread.sleep(timeLeaveBerth);
             Thread.sleep(10);
@@ -323,16 +325,16 @@ public class Ship implements Runnable {
         }
     }
 
-    public void calculateWorkTime(int workTime, JobType jobType) throws InterruptedException {
+    public void calculateWorkTime(Berth berth, int workTime, JobType jobType) throws InterruptedException {
         int toLower = workTime / 10;
         int progress = 10;
         while (workTime != 0) {
             workTime = workTime - toLower;
             Thread.sleep(toLower);
             if (jobType.equals(UNSHIP)) {
-                supervisor.unshipProgress(progress);
+                supervisor.printBerthLog(berth, supervisor.unshipProgress(berth.getId(),progress));
             } else {
-                supervisor.loadingProgress(progress);
+                supervisor.printBerthLog(berth, supervisor.loadingProgress(berth.getId(), progress));
             }
             progress = progress + 10;
         }
