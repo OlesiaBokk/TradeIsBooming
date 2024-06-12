@@ -242,7 +242,7 @@ public class Supervisor {
 
             FileAppender appender = FileAppender.createAppender(
                     fileName,
-                    "true",
+                    "false",
                     "false",
                     "File - " + berth.getId(),
                     "true",
