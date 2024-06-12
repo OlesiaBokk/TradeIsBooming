@@ -271,7 +271,7 @@ public class Ship implements Runnable {
                 List<Berth> berths = supervisor.getBerthList();
                 supervisor.setLoggerToBerth(berths);
 
-                for (int i = 0; i <= berths.size(); i++) {
+                for (int i = 0; i < berths.size(); i++) {
                     berths.get(i).lock.lock();
                     if (berths.get(i).needUnloadStock() && getJobType().equals(JobType.LOAD)) {
                         supervisor.printBerthLog(berths.get(i), supervisor.berthLocked(berths.get(i).getId(), getShipId()));
