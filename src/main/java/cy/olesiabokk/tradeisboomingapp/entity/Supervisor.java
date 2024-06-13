@@ -16,9 +16,6 @@ import java.util.List;
 
 public class Supervisor {
     private List<Berth> berthList;
-    private Berth berth;
-    private Ship ship;
-    private Stock stock;
     private static Logger logger = LogManager.getLogger(Supervisor.class);
 
     public Supervisor(List<Berth> list){
@@ -27,62 +24,6 @@ public class Supervisor {
 
     public List<Berth> getBerthList() {
         return berthList;
-    }
-
-    public void setBerthList(List<Berth> list) {
-        this.berthList = list;
-    }
-
-    public Berth getBerth() {
-        return berth;
-    }
-
-    public Long getBertId() {
-        return berth.getId();
-    }
-
-    public Ship getShip() {
-        return ship;
-    }
-
-    public Long getShipId() {
-        return ship.getShipId();
-    }
-
-    public int getAvailStockPlace() {
-        return berth.getAvailPlace();
-    }
-
-    public int getCurrentStockAmount() {
-        return berth.getCurrentStockAmount();
-    }
-
-    public boolean berthNeedLoading() {
-        return berth.needLoadStock();
-    }
-
-    public boolean berthNeedUnloading() {
-        return berth.needUnloadStock();
-    }
-
-    public boolean berthIsLocked() {
-        return berth.lock.isLocked();
-    }
-
-    public int getAvailShipPlace() {
-        return ship.getAvailablePlace();
-    }
-
-    public int getCurrentShipAmount() {
-        return ship.getCurrentAmount();
-    }
-
-    public JobType getShipJobType() {
-        return ship.getJobType();
-    }
-
-    public boolean getShipJobStatus() {
-        return ship.getVisitedPort();
     }
 
     public String berthLocked(Long berthId, Long shipId) {
@@ -230,7 +171,6 @@ public class Supervisor {
         Configuration config = context.getConfiguration();
         Calendar calendar = new GregorianCalendar();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy");
-
         for (Berth berth : berthList) {
             StringBuilder sb = new StringBuilder();
             String loggerName = "Berth " + berth.getId();
@@ -239,7 +179,6 @@ public class Supervisor {
                     .append(" ")
                     .append(dateFormat.format(calendar.getTime()))
                     .append(".txt").toString();
-
             FileAppender appender = FileAppender.createAppender(
                     fileName,
                     "false",
@@ -263,7 +202,6 @@ public class Supervisor {
             );
             appender.start();
             config.addAppender(appender);
-
             LoggerConfig loggerConfig = new LoggerConfig(loggerName, Level.INFO, true);
             loggerConfig.addAppender(appender, Level.INFO, null);
             config.addLogger(loggerName, loggerConfig);
