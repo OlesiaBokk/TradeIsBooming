@@ -2,6 +2,7 @@ package cy.olesiabokk.tradeisboomingapp.main;
 
 import cy.olesiabokk.tradeisboomingapp.entity.*;
 import cy.olesiabokk.tradeisboomingapp.util.Generator;
+import cy.olesiabokk.tradeisboomingapp.util.LogCleaner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.concurrent.Executors;
 
 public class Main {
     public static void main(String[] args) {
+        LogCleaner.cleanLogs("logs");
         Generator generator = new Generator();
         List<Berth> berthList = new ArrayList<>();
         for (int i = 0; i < 4; i++) {

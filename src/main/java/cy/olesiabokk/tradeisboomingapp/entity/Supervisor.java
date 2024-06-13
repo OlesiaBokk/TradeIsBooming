@@ -247,7 +247,7 @@ public class Supervisor {
                     "File - " + berth.getId(),
                     "true",
                     "false",
-                    "false",
+                    "true",
                     "5000",
                     PatternLayout.createLayout("%d{HH:mm:ss} - %m%n",
                             config,
