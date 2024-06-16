@@ -18,16 +18,13 @@ public class Main {
             berthList.add(new Berth(new Stock(generator.addMaxCapacity(4000, 10000))));
             berthList.get(i).setCurrStockAmount(generator.getRandomNum(0, berthList.get(i).getMaxStockCapacity()));
         }
-
         Supervisor supervisor = new Supervisor(berthList);
         Port port = new Port(supervisor, berthList);
-
         List<Ship> ships = new ArrayList<>();
         for (int i = 0; i < 150; i++) {
             ships.add(new Ship(generator.addMaxCapacity(200, 500), generator.getRandomJob(), supervisor));
             ships.get(i).setCurrentAmount(generator.getRandomNum(0, ships.get(i).getMaxCapacity()));
         }
-
         ExecutorService executorService = Executors.newFixedThreadPool(150);
         for (Ship ship : ships) {
             executorService.submit(ship);
