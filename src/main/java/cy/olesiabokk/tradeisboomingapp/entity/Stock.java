@@ -1,8 +1,8 @@
 package cy.olesiabokk.tradeisboomingapp.entity;
 
 public class Stock {
-    private final int maxCapacity; // вместимость
-    private int currentAmount; // сколько занято товарами
+    private final int maxCapacity;
+    private int currentAmount;
 
     public Stock(int maxCapacity){
         this.maxCapacity = maxCapacity;
@@ -24,12 +24,10 @@ public class Stock {
         return (maxCapacity - currentAmount);
     }
 
-    // нужно забрать товары из хранилища
     public boolean needUnload(){
         return getAvailablePlace() <= 2000;
     }
 
-    // нужно привезти товары
     public boolean needLoad(){
         return getCurrentAmount() <= 1000;
     }
