@@ -28,7 +28,7 @@ public class Main {
             ships.get(i).setCurrentAmount(generator.getRandomNum(0, ships.get(i).getMaxCapacity()));
         }
 
-        ExecutorService executorService = Executors.newFixedThreadPool(45);
+        ExecutorService executorService = Executors.newFixedThreadPool(150);
         for (Ship ship : ships) {
             executorService.submit(ship);
         }
