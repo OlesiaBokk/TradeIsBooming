@@ -91,25 +91,20 @@ public class Ship implements Runnable {
         int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
         supervisor.printBerthLog(berth, supervisor.shipEntersPort(getShipId(), getJobType(), timeEnterBerth));
         try {
-            //Thread.sleep(timeEnterBerth);
-            Thread.sleep(10);
+            Thread.sleep(timeEnterBerth);
         } catch (InterruptedException e) {
             System.err.println(e.getMessage());
         }
-        // запросить свободное место причала
         supervisor.printBerthLog(berth, supervisor.availableStockPlace(berth.getId(), berth.getAvailPlace()));
         supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
-        // запросить кол-во товаров на корабле
         supervisor.printBerthLog(berth, supervisor.currentShipAmount(getShipId(), getCurrentAmount()));
-        // проверяем, что после разгрузки корабля останется 0 или больше товаров на корабле, выполняем работу
         if (berth.getAvailPlace() >= getCurrentAmount()) {
             int timeUnship = getCurrentAmount() * getTimeUnloading();
             supervisor.printBerthLog(berth, supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship));
             berth.setCurrStockAmount(berth.getCurrentStockAmount() + getCurrentAmount());
             setCurrentAmount(0);
             try {
-                Thread.sleep(10);
-                //calculateWorkTime(berth, timeUnship, UNSHIP);
+                calculateWorkTime(berth, timeUnship, UNSHIP);
             } catch (InterruptedException e) {
                 System.err.println(e.getMessage());
             }
@@ -122,8 +117,7 @@ public class Ship implements Runnable {
             berth.setCurrStockAmount(berth.getCurrentStockAmount() + toUnship);
             setCurrentAmount(getCurrentAmount() - toUnship);
             try {
-                Thread.sleep(10);
-                //calculateWorkTime(berth, timeUnship, UNSHIP);
+                calculateWorkTime(berth, timeUnship, UNSHIP);
             } catch (InterruptedException e) {
                 System.err.println(e.getMessage());
             }
