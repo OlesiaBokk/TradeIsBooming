@@ -239,14 +239,12 @@ public class Ship implements Runnable {
         leavePort(berth);
     }
 
-
     @Override
     public void run() {
         try {
             while (!getVisitedPort()) {
                 List<Berth> berths = supervisor.getBerthList();
                 supervisor.setLoggerToBerth(berths);
-
                 for (int i = 0; i < berths.size(); i++) {
                     berths.get(i).lock.lock();
                     if (berths.get(i).needUnloadStock() && getJobType().equals(JobType.LOAD)) {
@@ -258,7 +256,6 @@ public class Ship implements Runnable {
                         if (getVisitedPort()) {
                             return;
                         }
-
                     } else if (berths.get(i).needLoadStock() && getJobType().equals(JobType.UNSHIP)) {
                         supervisor.printBerthLog(berths.get(i), supervisor.berthLocked(berths.get(i).getId(), getShipId()));
                         supervisor.printBerthLog(berths.get(i), supervisor.requireBerthLoad(berths.get(i).getId(), berths.get(i).needLoadStock()));
@@ -268,7 +265,6 @@ public class Ship implements Runnable {
                         if (getVisitedPort()) {
                             return;
                         }
-
                     } else {
                         supervisor.printBerthLog(berths.get(i), supervisor.berthLocked(berths.get(i).getId(), getShipId()));
                         doJobType(berths.get(i));
@@ -294,8 +290,7 @@ public class Ship implements Runnable {
         supervisor.printBerthLog(berth, supervisor.shipJobStatus(getShipId(), getVisitedPort()));
         supervisor.printBerthLog(berth, supervisor.shipLeavesPort(getShipId(), timeLeaveBerth));
         try {
-            //Thread.sleep(timeLeaveBerth);
-            Thread.sleep(10);
+            Thread.sleep(timeLeaveBerth);
         } catch (InterruptedException e) {
             System.err.println(e.getMessage());
         }
