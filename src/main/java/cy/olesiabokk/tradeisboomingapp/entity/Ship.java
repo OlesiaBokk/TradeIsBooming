@@ -131,18 +131,14 @@ public class Ship implements Runnable {
         int timeEnterBerth = getTimeEnterBerth() * getCurrentAmount();
         supervisor.printBerthLog(berth, supervisor.shipEntersPort(getShipId(), getJobType(), timeEnterBerth));
         try {
-            //Thread.sleep(timeEnterBerth);
-            Thread.sleep(10);
+            Thread.sleep(timeEnterBerth);
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
-        // запросить кол-во товаров для разгрузки причала
         supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
         supervisor.printBerthLog(berth, supervisor.maxShipCapacity(getShipId(), getMaxCapacity()));
-        // запросить свободное место на корабле
         supervisor.printBerthLog(berth, supervisor.availableShipPlace(getShipId(), getAvailablePlace()));
         supervisor.printBerthLog(berth, supervisor.currentShipAmount(getShipId(), getCurrentAmount()));
-        // проверить если своб место на корабле меньше или = кол-ву на складе, выполнить работу
         if (getAvailablePlace() <= berth.getCurrentStockAmount() && berth.getCurrentStockAmount() != 0) {
             int toLoad = getAvailablePlace();
             int timeLoading = toLoad * getTimeLoading();
@@ -150,8 +146,7 @@ public class Ship implements Runnable {
             berth.setCurrStockAmount(berth.getCurrentStockAmount() - getAvailablePlace());
             setCurrentAmount(getCurrentAmount() + getAvailablePlace());
             try {
-                Thread.sleep(10);
-                //calculateWorkTime(berth, timeLoading, LOAD);
+                calculateWorkTime(berth, timeLoading, LOAD);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
@@ -164,8 +159,7 @@ public class Ship implements Runnable {
             berth.setCurrStockAmount(0);
             setCurrentAmount(getCurrentAmount() + toLoad);
             try {
-                Thread.sleep(10);
-                //calculateWorkTime(berth, timeLoading, LOAD);
+                calculateWorkTime(berth, timeLoading, LOAD);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
