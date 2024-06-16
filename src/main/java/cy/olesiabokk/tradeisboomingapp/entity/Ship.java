@@ -7,12 +7,10 @@ import static cy.olesiabokk.tradeisboomingapp.entity.JobType.*;
 
 public class Ship implements Runnable {
     private final Long id;
-    private final int maxCapacity; // вместимость
-    private int currentAmount; // сколько занято товарами
-    private static final int timeLoading = 100;
-    private static final int timeUnloading = 100;
-    private static final int timeEnterBerth = 10;
-    private static final int timeLeaveBerth = 10;
+    private final int maxCapacity;
+    private int currentAmount;
+    private static final int workTime = 100;
+    private static final int movingTime = 10;
     private boolean visitedPort = false;
     private static final AtomicLong counter = new AtomicLong(0);
     private final JobType jobType;
@@ -46,19 +44,19 @@ public class Ship implements Runnable {
     }
 
     public int getTimeEnterBerth() {
-        return timeEnterBerth;
+        return movingTime;
     }
 
     public int getTimeLoading() {
-        return timeLoading;
+        return workTime;
     }
 
     public int getTimeUnloading() {
-        return timeUnloading;
+        return workTime;
     }
 
     public int getTimeLeaveBerth() {
-        return timeLeaveBerth;
+        return movingTime;
     }
 
     public boolean getVisitedPort() {
