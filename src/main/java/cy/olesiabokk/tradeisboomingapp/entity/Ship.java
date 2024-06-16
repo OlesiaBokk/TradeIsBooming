@@ -194,7 +194,6 @@ public class Ship implements Runnable {
             }
             supervisor.printBerthLog(berth, supervisor.shipEndsUnship(getShipId(), berth.getId()));
         }
-        ////// LOADING
         supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
         supervisor.printBerthLog(berth, supervisor.maxShipCapacity(getShipId(), getMaxCapacity()));
         supervisor.printBerthLog(berth, supervisor.availableShipPlace(getShipId(), getAvailablePlace()));
