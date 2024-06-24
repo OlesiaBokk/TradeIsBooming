@@ -16,7 +16,6 @@ import java.util.List;
 
 public class Supervisor {
     private List<Berth> berthList;
-    private static Logger logger = LogManager.getLogger(Supervisor.class);
 
     public Supervisor(List<Berth> list){
         this.berthList = list;
@@ -27,22 +26,16 @@ public class Supervisor {
     }
 
     public String berthLocked(Long berthId, Long shipId) {
-        String message = String.format("Berth %d is locked by Ship %d.", berthId, shipId);
-        printMessage(message);
-        return message;
+        return String.format("Berth %d is locked by Ship %d.", berthId, shipId);
     }
 
     public String berthUnlocked(Long berthId, Long shipId) {
-        String message = String.format("Ship %d unlocked Berth %d.", shipId, berthId);
-        printMessage(message);
-        return message;
+        return String.format("Ship %d unlocked Berth %d.", shipId, berthId);
     }
 
     public String requireBerthUnload(Long berthId, boolean needUnload) {
         if (needUnload) {
-            String message = String.format("Berth %d: Stock unloading required.", berthId);
-            printMessage(message);
-            return message;
+            return String.format("Berth %d: Stock unloading required.", berthId);
         } else {
             return null;
         }
@@ -50,115 +43,76 @@ public class Supervisor {
 
     public String requireBerthLoad(Long berthId, boolean needLoad) {
         if (needLoad) {
-            String message = String.format("Berth %d: Stock loading required.", berthId);
-            printMessage(message);
-            return message;
+            return String.format("Berth %d: Stock loading required.", berthId);
         } else {
             return null;
         }
     }
 
     public String currentStockAmount(Long berthId, int currentAmount) {
-        String message = String.format("Berth %d: Stock current amount of goods is %d.", berthId, currentAmount);
-        printMessage(message);
-        return message;
+        return String.format("Berth %d: Stock current amount of goods is %d.", berthId, currentAmount);
     }
 
     public String maxStockCapacity(Long berthId, int maxCapacity) {
-        String message = String.format("Berth %d: Stock max capacity is %d.", berthId, maxCapacity);
-        printMessage(message);
-        return message;
+        return String.format("Berth %d: Stock max capacity is %d.", berthId, maxCapacity);
     }
 
     public String availableStockPlace(Long berthId, int availablePlace) {
-        String message = String.format("Berth %d: Stock available place is %d.", berthId, availablePlace);
-        printMessage(message);
-        return message;
+        return String.format("Berth %d: Stock available place is %d.", berthId, availablePlace);
     }
 
     public String shipEntersPort(Long shipId, JobType jobType, long time) {
-        String message = String.format("Ship %d enters port. Job type is " + jobType + " . Expected shipping time: %d minutes, %d seconds", shipId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
-        printMessage(message);
-        return message;
+        return String.format("Ship %d enters port. Job type is " + jobType + " . Expected shipping time: %d minutes, %d seconds", shipId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
     }
 
     public String shipLeavesPort(Long shipId, long time) {
-        String message = String.format("Ship %d leaves port. Expected departure time: %d minutes, %d seconds", shipId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
-        printMessage(message);
-        return message;
+        return String.format("Ship %d leaves port. Expected departure time: %d minutes, %d seconds", shipId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
     }
 
     public String currentShipAmount(Long shipID, int currAmount) {
-        String message = String.format("Ship %d current amount of Goods: %d", shipID, currAmount);
-        printMessage(message);
-        return message;
+        return String.format("Ship %d current amount of Goods: %d", shipID, currAmount);
     }
 
     public String availableShipPlace(Long shipID, int availPlace) {
-        String message = String.format("Ship %d available place: %d", shipID, availPlace);
-        printMessage(message);
-        return message;
+        return String.format("Ship %d available place: %d", shipID, availPlace);
     }
 
     public String maxShipCapacity(Long shipID, int maxCapacity) {
-        String message = String.format("Ship %d: max capacity is %d.", shipID, maxCapacity);
-        printMessage(message);
-        return message;
+        return String.format("Ship %d: max capacity is %d.", shipID, maxCapacity);
     }
 
     public String shipJobStatus(Long shipID, boolean visitedPort) {
         if (visitedPort) {
-            String message = String.format("Ship %d done its job", shipID);
-            printMessage(message);
-            return message;
+            return String.format("Ship %d done its job", shipID);
         } else {
-            String message = String.format("Ship %d cannot do its job", shipID);
-            printMessage(message);
-            return message;
+            return String.format("Ship %d cannot do its job", shipID);
         }
     }
 
     public String shipStartsUnship(Long shipId, Long berthId, long time) {
-        String message = String.format("Ship %d starts unshipping in berth %d. Expected unshipping time: %d minutes, %d seconds",
+        return String.format("Ship %d starts unshipping in berth %d. Expected unshipping time: %d minutes, %d seconds",
                 shipId, berthId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
-        printMessage(message);
-        return message;
     }
 
     public String shipStartsLoad(Long shipId, Long berthId, long time) {
-        String message = String.format("Ship %d starts loading in berth %d. Expected loading time: %d minutes, %d seconds",
+        return String.format("Ship %d starts loading in berth %d. Expected loading time: %d minutes, %d seconds",
                 shipId, berthId, (time / (1000 * 60)) % 60, (time / 1000) % 60);
-        printMessage(message);
-        return message;
     }
 
     public String shipEndsUnship(Long shipId, Long berthId) {
-        String message = String.format("Ship %d ended unshipping in berth %d.", shipId, berthId);
-        printMessage(message);
-        return message;
+        return String.format("Ship %d ended unshipping in berth %d.", shipId, berthId);
     }
 
     public String shipEndsLoad(Long shipId, Long berthId) {
-        String message = String.format("Ship %d ended loading in berth %d.", shipId, berthId);
-        printMessage(message);
-        return message;
+        return String.format("Ship %d ended loading in berth %d.", shipId, berthId);
     }
 
     public String unshipProgress(Long berthId, int percent) {
-        String message = String.format("Unshipping progress %d%%", percent);
-        printMessage(message);
-        return message;
+        return String.format("Unshipping progress %d%%", percent);
     }
 
     public String loadingProgress(Long berthId, int percent) {
-        String message = String.format("Loading progress %d%%", percent);
-        printMessage(message);
-        return message;
-    }
-
-    private void printMessage(String message) {
-        System.out.println(message);
-        logger.log(Level.INFO, message);
+        return String.format("Loading progress %d%%", percent);
     }
 
     public void printBerthLog(Berth berth, String message) {
