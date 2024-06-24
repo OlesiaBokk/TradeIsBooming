@@ -79,134 +79,20 @@ public class Ship implements Runnable {
 
     public void unship(Berth berth) {
         enterPort(berth);
-        supervisor.printBerthLog(berth, supervisor.availableStockPlace(berth.getId(), berth.getAvailPlace()));
-        supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
-        supervisor.printBerthLog(berth, supervisor.currentShipAmount(getShipId(), getCurrentAmount()));
-        if (berth.getAvailPlace() >= getCurrentAmount()) {
-            int timeUnship = getCurrentAmount() * getWorkTime();
-            supervisor.printBerthLog(berth, supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship));
-            berth.setCurrStockAmount(berth.getCurrentStockAmount() + getCurrentAmount());
-            setCurrentAmount(0);
-            try {
-                calculateWorkTime(berth, timeUnship, UNSHIP);
-            } catch (InterruptedException e) {
-                System.err.println(e.getMessage());
-            }
-            supervisor.printBerthLog(berth, supervisor.shipEndsUnship(getShipId(), berth.getId()));
-            setVisitedPort(true);
-        } else if (berth.getAvailPlace() < getCurrentAmount() && berth.getAvailPlace() != 0) {
-            int toUnship = berth.getAvailPlace();
-            int timeUnship = toUnship * getWorkTime();
-            supervisor.printBerthLog(berth, supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship));
-            berth.setCurrStockAmount(berth.getCurrentStockAmount() + toUnship);
-            setCurrentAmount(getCurrentAmount() - toUnship);
-            try {
-                calculateWorkTime(berth, timeUnship, UNSHIP);
-            } catch (InterruptedException e) {
-                System.err.println(e.getMessage());
-            }
-            supervisor.printBerthLog(berth, supervisor.shipEndsUnship(getShipId(), berth.getId()));
-            setVisitedPort(true);
-        }
+        unshipWork(berth);
         leavePort(berth);
     }
 
     public void load(Berth berth) {
         enterPort(berth);
-        supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
-        supervisor.printBerthLog(berth, supervisor.maxShipCapacity(getShipId(), getMaxCapacity()));
-        supervisor.printBerthLog(berth, supervisor.availableShipPlace(getShipId(), getAvailablePlace()));
-        supervisor.printBerthLog(berth, supervisor.currentShipAmount(getShipId(), getCurrentAmount()));
-        if (getAvailablePlace() <= berth.getCurrentStockAmount() && berth.getCurrentStockAmount() != 0) {
-            int toLoad = getAvailablePlace();
-            int timeLoading = toLoad * getWorkTime();
-            supervisor.printBerthLog(berth, supervisor.shipStartsLoad(getShipId(), berth.getId(), timeLoading));
-            berth.setCurrStockAmount(berth.getCurrentStockAmount() - getAvailablePlace());
-            setCurrentAmount(getCurrentAmount() + getAvailablePlace());
-            try {
-                calculateWorkTime(berth, timeLoading, LOAD);
-            } catch (InterruptedException e) {
-                System.out.println(e.getMessage());
-            }
-            supervisor.printBerthLog(berth, supervisor.shipEndsLoad(getShipId(), berth.getId()));
-            setVisitedPort(true);
-        } else if (getAvailablePlace() > berth.getCurrentStockAmount() && berth.getCurrentStockAmount() != 0) {
-            int toLoad = berth.getCurrentStockAmount();
-            int timeLoading = toLoad * getWorkTime();
-            supervisor.printBerthLog(berth, supervisor.shipStartsLoad(getShipId(), berth.getId(), timeLoading));
-            berth.setCurrStockAmount(0);
-            setCurrentAmount(getCurrentAmount() + toLoad);
-            try {
-                calculateWorkTime(berth, timeLoading, LOAD);
-            } catch (InterruptedException e) {
-                System.out.println(e.getMessage());
-            }
-            supervisor.printBerthLog(berth, supervisor.shipEndsLoad(getShipId(), berth.getId()));
-            setVisitedPort(true);
-        }
+        loadWork(berth);
         leavePort(berth);
     }
 
     public void unshipThenLoad(Berth berth) {
         enterPort(berth);
-        supervisor.printBerthLog(berth, supervisor.availableStockPlace(berth.getId(), berth.getAvailPlace()));
-        supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
-        supervisor.printBerthLog(berth, supervisor.currentShipAmount(getShipId(), getCurrentAmount()));
-        if (berth.getAvailPlace() >= getCurrentAmount()) {
-            int timeUnship = getCurrentAmount() * getWorkTime();
-            supervisor.printBerthLog(berth, supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship));
-            berth.setCurrStockAmount(berth.getCurrentStockAmount() + getCurrentAmount());
-            setCurrentAmount(0);
-            try {
-                calculateWorkTime(berth, timeUnship, UNSHIP);
-            } catch (InterruptedException e) {
-                System.out.println(e.getMessage());
-            }
-            supervisor.printBerthLog(berth, supervisor.shipEndsUnship(getShipId(), berth.getId()));
-        } else if (berth.getAvailPlace() < getCurrentAmount() && berth.getAvailPlace() != 0) {
-            int toUnship = berth.getAvailPlace();
-            int timeUnship = toUnship * getWorkTime();
-            supervisor.printBerthLog(berth, supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship));
-            berth.setCurrStockAmount(berth.getCurrentStockAmount() + toUnship);
-            setCurrentAmount(getCurrentAmount() - toUnship);
-            try {
-                calculateWorkTime(berth, timeUnship, UNSHIP);
-            } catch (InterruptedException e) {
-                System.out.println(e.getMessage());
-            }
-            supervisor.printBerthLog(berth, supervisor.shipEndsUnship(getShipId(), berth.getId()));
-        }
-        supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
-        supervisor.printBerthLog(berth, supervisor.maxShipCapacity(getShipId(), getMaxCapacity()));
-        supervisor.printBerthLog(berth, supervisor.availableShipPlace(getShipId(), getAvailablePlace()));
-        supervisor.printBerthLog(berth, supervisor.currentShipAmount(getShipId(), getCurrentAmount()));
-        if (getAvailablePlace() <= berth.getCurrentStockAmount() && berth.getCurrentStockAmount() != 0) {
-            int toLoad = getAvailablePlace();
-            int timeLoading = toLoad * getWorkTime();
-            supervisor.printBerthLog(berth, supervisor.shipStartsLoad(getShipId(), berth.getId(), timeLoading));
-            berth.setCurrStockAmount(berth.getCurrentStockAmount() - getAvailablePlace());
-            setCurrentAmount(getCurrentAmount() + getAvailablePlace());
-            try {
-                calculateWorkTime(berth, timeLoading, LOAD);
-            } catch (InterruptedException e) {
-                System.out.println(e.getMessage());
-            }
-            supervisor.printBerthLog(berth, supervisor.shipEndsLoad(getShipId(), berth.getId()));
-            setVisitedPort(true);
-        } else if (getAvailablePlace() > berth.getCurrentStockAmount() && berth.getCurrentStockAmount() != 0) {
-            int toLoad = berth.getCurrentStockAmount();
-            int timeLoading = toLoad * getWorkTime();
-            supervisor.printBerthLog(berth, supervisor.shipStartsLoad(getShipId(), berth.getId(), timeLoading));
-            berth.setCurrStockAmount(0);
-            setCurrentAmount(getCurrentAmount() + toLoad);
-            try {
-                calculateWorkTime(berth, timeLoading, LOAD);
-            } catch (InterruptedException e) {
-                System.out.println(e.getMessage());
-            }
-            supervisor.printBerthLog(berth, supervisor.shipEndsLoad(getShipId(), berth.getId()));
-            setVisitedPort(true);
-        }
+        unshipWork(berth);
+        loadWork(berth);
         leavePort(berth);
     }
 
@@ -252,7 +138,7 @@ public class Ship implements Runnable {
         }
     }
 
-    public void enterPort(Berth berth){
+    public void enterPort(Berth berth) {
         int timeEnterBerth = getMovingTime() * getCurrentAmount();
         supervisor.printBerthLog(berth, supervisor.shipEntersPort(getShipId(), getJobType(), timeEnterBerth));
         try {
@@ -284,11 +170,81 @@ public class Ship implements Runnable {
             workTime = workTime - toLower;
             Thread.sleep(toLower);
             if (jobType.equals(UNSHIP)) {
-                supervisor.printBerthLog(berth, supervisor.unshipProgress(berth.getId(),progress));
+                supervisor.printBerthLog(berth, supervisor.unshipProgress(berth.getId(), progress));
             } else {
                 supervisor.printBerthLog(berth, supervisor.loadingProgress(berth.getId(), progress));
             }
             progress = progress + 10;
+        }
+    }
+
+    public void unshipWork(Berth berth) {
+        supervisor.printBerthLog(berth, supervisor.availableStockPlace(berth.getId(), berth.getAvailPlace()));
+        supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
+        supervisor.printBerthLog(berth, supervisor.currentShipAmount(getShipId(), getCurrentAmount()));
+        if (berth.getAvailPlace() >= getCurrentAmount()) {
+            int timeUnship = getCurrentAmount() * getWorkTime();
+            supervisor.printBerthLog(berth, supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship));
+            berth.setCurrStockAmount(berth.getCurrentStockAmount() + getCurrentAmount());
+            setCurrentAmount(0);
+            try {
+                calculateWorkTime(berth, timeUnship, UNSHIP);
+            } catch (InterruptedException e) {
+                System.err.println(e.getMessage());
+            }
+            supervisor.printBerthLog(berth, supervisor.shipEndsUnship(getShipId(), berth.getId()));
+            if (getJobType().equals(UNSHIP)) {
+                setVisitedPort(true);
+            }
+        } else if (berth.getAvailPlace() < getCurrentAmount() && berth.getAvailPlace() != 0) {
+            int toUnship = berth.getAvailPlace();
+            int timeUnship = toUnship * getWorkTime();
+            supervisor.printBerthLog(berth, supervisor.shipStartsUnship(getShipId(), berth.getId(), timeUnship));
+            berth.setCurrStockAmount(berth.getCurrentStockAmount() + toUnship);
+            setCurrentAmount(getCurrentAmount() - toUnship);
+            try {
+                calculateWorkTime(berth, timeUnship, UNSHIP);
+            } catch (InterruptedException e) {
+                System.err.println(e.getMessage());
+            }
+            supervisor.printBerthLog(berth, supervisor.shipEndsUnship(getShipId(), berth.getId()));
+            if (getJobType().equals(UNSHIP)) {
+                setVisitedPort(true);
+            }
+        }
+    }
+
+    public void loadWork(Berth berth){
+        supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
+        supervisor.printBerthLog(berth, supervisor.maxShipCapacity(getShipId(), getMaxCapacity()));
+        supervisor.printBerthLog(berth, supervisor.availableShipPlace(getShipId(), getAvailablePlace()));
+        supervisor.printBerthLog(berth, supervisor.currentShipAmount(getShipId(), getCurrentAmount()));
+        if (getAvailablePlace() <= berth.getCurrentStockAmount() && berth.getCurrentStockAmount() != 0) {
+            int toLoad = getAvailablePlace();
+            int timeLoading = toLoad * getWorkTime();
+            supervisor.printBerthLog(berth, supervisor.shipStartsLoad(getShipId(), berth.getId(), timeLoading));
+            berth.setCurrStockAmount(berth.getCurrentStockAmount() - getAvailablePlace());
+            setCurrentAmount(getCurrentAmount() + getAvailablePlace());
+            try {
+                calculateWorkTime(berth, timeLoading, LOAD);
+            } catch (InterruptedException e) {
+                System.err.println(e.getMessage());
+            }
+            supervisor.printBerthLog(berth, supervisor.shipEndsLoad(getShipId(), berth.getId()));
+            setVisitedPort(true);
+        } else if (getAvailablePlace() > berth.getCurrentStockAmount() && berth.getCurrentStockAmount() != 0) {
+            int toLoad = berth.getCurrentStockAmount();
+            int timeLoading = toLoad * getWorkTime();
+            supervisor.printBerthLog(berth, supervisor.shipStartsLoad(getShipId(), berth.getId(), timeLoading));
+            berth.setCurrStockAmount(0);
+            setCurrentAmount(getCurrentAmount() + toLoad);
+            try {
+                calculateWorkTime(berth, timeLoading, LOAD);
+            } catch (InterruptedException e) {
+                System.err.println(e.getMessage());
+            }
+            supervisor.printBerthLog(berth, supervisor.shipEndsLoad(getShipId(), berth.getId()));
+            setVisitedPort(true);
         }
     }
 }
