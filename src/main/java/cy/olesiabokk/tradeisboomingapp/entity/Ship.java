@@ -78,13 +78,7 @@ public class Ship implements Runnable {
     }
 
     public void unship(Berth berth) {
-        int timeEnterBerth = getMovingTime() * getCurrentAmount();
-        supervisor.printBerthLog(berth, supervisor.shipEntersPort(getShipId(), getJobType(), timeEnterBerth));
-        try {
-            Thread.sleep(timeEnterBerth);
-        } catch (InterruptedException e) {
-            System.err.println(e.getMessage());
-        }
+        enterPort(berth);
         supervisor.printBerthLog(berth, supervisor.availableStockPlace(berth.getId(), berth.getAvailPlace()));
         supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
         supervisor.printBerthLog(berth, supervisor.currentShipAmount(getShipId(), getCurrentAmount()));
@@ -118,13 +112,7 @@ public class Ship implements Runnable {
     }
 
     public void load(Berth berth) {
-        int timeEnterBerth = getMovingTime() * getCurrentAmount();
-        supervisor.printBerthLog(berth, supervisor.shipEntersPort(getShipId(), getJobType(), timeEnterBerth));
-        try {
-            Thread.sleep(timeEnterBerth);
-        } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
-        }
+        enterPort(berth);
         supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
         supervisor.printBerthLog(berth, supervisor.maxShipCapacity(getShipId(), getMaxCapacity()));
         supervisor.printBerthLog(berth, supervisor.availableShipPlace(getShipId(), getAvailablePlace()));
@@ -160,13 +148,7 @@ public class Ship implements Runnable {
     }
 
     public void unshipThenLoad(Berth berth) {
-        int timeEnterBerth = getMovingTime() * getCurrentAmount();
-        supervisor.printBerthLog(berth, supervisor.shipEntersPort(getShipId(), getJobType(), timeEnterBerth));
-        try {
-            Thread.sleep(timeEnterBerth);
-        } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
-        }
+        enterPort(berth);
         supervisor.printBerthLog(berth, supervisor.availableStockPlace(berth.getId(), berth.getAvailPlace()));
         supervisor.printBerthLog(berth, supervisor.currentStockAmount(berth.getId(), berth.getCurrentStockAmount()));
         supervisor.printBerthLog(berth, supervisor.currentShipAmount(getShipId(), getCurrentAmount()));
@@ -266,6 +248,16 @@ public class Ship implements Runnable {
                 }
             }
         } catch (RuntimeException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void enterPort(Berth berth){
+        int timeEnterBerth = getMovingTime() * getCurrentAmount();
+        supervisor.printBerthLog(berth, supervisor.shipEntersPort(getShipId(), getJobType(), timeEnterBerth));
+        try {
+            Thread.sleep(timeEnterBerth);
+        } catch (InterruptedException e) {
             System.err.println(e.getMessage());
         }
     }
