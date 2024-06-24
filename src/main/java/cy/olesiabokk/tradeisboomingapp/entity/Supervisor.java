@@ -15,6 +15,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class Supervisor {
+    private static final Logger logger = LogManager.getLogger(Supervisor.class);
     private List<Berth> berthList;
 
     public Supervisor(List<Berth> list){
